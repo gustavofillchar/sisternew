@@ -1,6 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {StatusBar, StyleSheet, ImageBackground, View} from 'react-native';
+import {
+  StatusBar,
+  StyleSheet,
+  ImageBackground,
+  View,
+  Alert,
+} from 'react-native';
 import MDIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -40,7 +46,10 @@ export default function ReadCar() {
             source={bgscanner}
             style={styles.background}
           />
-          <RNCamera style={styles.camera} />
+          <RNCamera
+            style={styles.camera}
+            onBarCodeRead={(e) => alert('Codigo da Van: ' + e.data)}
+          />
         </QRCameraReaderBox>
       ) : (
         <ContainerPanel source={wp}>

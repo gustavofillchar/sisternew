@@ -30,7 +30,9 @@ export default function RouteResult({route, onClose}) {
         <DescriptTitle>Início</DescriptTitle>
       </BoxTripDetail>
       <InfoBoxDescript>
-        <InfoDescriptText>{format(route.initialTime, "HH'h' mm'm' ss's'")}</InfoDescriptText>
+        <InfoDescriptText>
+          {format(route.initialTime, "HH'h' mm'm' ss's'")}
+        </InfoDescriptText>
       </InfoBoxDescript>
 
       <BoxTripDetail>
@@ -38,16 +40,18 @@ export default function RouteResult({route, onClose}) {
         <DescriptTitle>Fim</DescriptTitle>
       </BoxTripDetail>
       <InfoBoxDescript>
-        <InfoDescriptText>{format(route.finalTime, "HH'h' mm'm' ss's'")}</InfoDescriptText>
+        <InfoDescriptText>
+          {format(route.finalTime, "HH'h' mm'm' ss's'")}
+        </InfoDescriptText>
       </InfoBoxDescript>
 
-      {/* <BoxTripDetail>
+      <BoxTripDetail>
         <Icon name="map-marker-distance" size={25} color="#555" />
         <DescriptTitle>Distância Percorrida</DescriptTitle>
       </BoxTripDetail>
       <InfoBoxDescript>
         <InfoDescriptText>89 km</InfoDescriptText>
-      </InfoBoxDescript> */}
+      </InfoBoxDescript>
 
       <Separator />
       <BoxTripDetail>
@@ -58,7 +62,7 @@ export default function RouteResult({route, onClose}) {
         <InfoDescriptText>{totalStudents} alunos</InfoDescriptText>
       </InfoBoxDescript>
 
-      {/* <BoxTripDetail>
+      <BoxTripDetail>
         <Icon name="bus-school" size={25} color="#555" />
         <DescriptTitle>Alunos Transportados</DescriptTitle>
       </BoxTripDetail>
@@ -72,7 +76,7 @@ export default function RouteResult({route, onClose}) {
       </BoxTripDetail>
       <InfoBoxDescript>
         <InfoDescriptText>6 alunos</InfoDescriptText>
-      </InfoBoxDescript> */}
+      </InfoBoxDescript>
 
       <BoxTripDetail>
         <Icon name="map-marker-check" size={25} color="#555" />

@@ -57,11 +57,7 @@ const Routes = createAppContainer(
       Main: {
         screen: Main,
         navigationOptions: {
-          headerStyle: {
-            backgroundColor: '#C10C19',
-          },
-          // headerTitle: 'Resumo da Viagem',
-          headerTintColor: '#fff',
+          headerShown: false,
         },
       },
       CheckAuth: {
@@ -73,7 +69,7 @@ const Routes = createAppContainer(
     },
 
     {
-      initialRouteName: 'ReadCar',
+      initialRouteName: 'CheckAuth',
       defaultNavigationOptions: {
         headerBackTitle: 'Voltar',
         headerTruncatedBackTitle: 'Voltar',

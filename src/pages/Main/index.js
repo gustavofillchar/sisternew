@@ -1,12 +1,45 @@
 import React, {useEffect, useState, useCallback, useRef} from 'react';
-
-import {Container, MapBox} from './styles';
+import MDIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {
+  Container,
+  MapBox,
+  QRCameraReaderBox,
+  ContainerPanel,
+  Header,
+  Title,
+  TouchableHighlight,
+  Logout,
+  BoxButtons,
+  ButtonScanner,
+  ButtonScannerText,
+  ButtonAvailable,
+  ButtonAvailableText,
+} from './styles';
 import InitRoute from './InitRoute';
+
+import wp from '../../assets/van.jpg';
+
+import {RNCamera} from 'react-native-camera';
+
+import bgscanner from '../../assets/bg.png';
 
 import {fetchUserData} from '~/services/api';
 import {storeUserDataInStorage, getUserDataFromStorage} from '~/storage/user';
-import {getCurrentLocation, listenerUserPosition, stopPositionListener} from '~/utils/geolocation';
-import {ActivityIndicator, ToastAndroid} from 'react-native';
+import {
+  getCurrentLocation,
+  listenerUserPosition,
+  stopPositionListener,
+} from '~/utils/geolocation';
+import {
+  ActivityIndicator,
+  ToastAndroid,
+  StatusBar,
+  StyleSheet,
+  ImageBackground,
+  View,
+  Alert,
+} from 'react-native';
 import {ROUTE_STATUS} from '~/utils/contants';
 import RecordingRoute from './RecordingRoute';
 import RouteResult from './RouteResult';
@@ -48,10 +81,10 @@ export default function Main({navigation}) {
   }, [routeStatus]);
 
   const recordRoute = useCallback(async () => {
-    listenerPositionId.current = await listenerUserPosition(position => {
+    listenerPositionId.current = await listenerUserPosition((position) => {
       console.log(position);
       setCurrentLocation(position);
-      setCoordinates(prevState => [...prevState, position]);
+      setCoordinates((prevState) => [...prevState, position]);
     });
 
     const position = await getCurrentLocation();
@@ -66,10 +99,10 @@ export default function Main({navigation}) {
   }, []);
 
   const startRoute = useCallback(async () => {
-    listenerPositionId.current = await listenerUserPosition(position => {
+    listenerPositionId.current = await listenerUserPosition((position) => {
       console.log(position);
       setCurrentLocation(position);
-      setCoordinates(prevState => [...prevState, position]);
+      setCoordinates((prevState) => [...prevState, position]);
     });
     setRouteStatus(ROUTE_STATUS.ACTIVED);
   }, []);
@@ -82,11 +115,15 @@ export default function Main({navigation}) {
   }, []);
 
   const finalizeRoute = useCallback(
-    async finalPosition => {
+    async (finalPosition) => {
       ToastAndroid.show('Rota Finalizada', ToastAndroid.LONG);
       stopPositionListener(listenerPositionId.current);
       if (!route.finalTime) {
-        await storeRouteInStorage({...route, finalPosition, finalTime: Date.now()});
+        await storeRouteInStorage({
+          ...route,
+          finalPosition,
+          finalTime: Date.now(),
+        });
         setRoute({...route, finalPosition, finalTime: Date.now()});
       }
       setRouteStatus(ROUTE_STATUS.FINALIZED);
@@ -99,15 +136,15 @@ export default function Main({navigation}) {
     setRoute({});
   }, []);
 
-  const markStop = useCallback(stop => {
+  const markStop = useCallback((stop) => {
     console.log('STOP: ', stop);
-    setRoute(prevState => ({
+    setRoute((prevState) => ({
       ...prevState,
       stops: [...prevState.stops, stop],
     }));
   }, []);
 
-  const handleRouteSelection = useCallback(routeSelected => {
+  const handleRouteSelection = useCallback((routeSelected) => {
     setRoute(routeSelected);
   }, []);
 
@@ -133,7 +170,12 @@ export default function Main({navigation}) {
     } else if (routeStatus === ROUTE_STATUS.FINALIZED) {
       return <RouteResult route={route} onClose={closeResultRoute} />;
     } else {
-      return <ActivedRoute onCancelRoute={cancelRoute} onFinalizeRoute={finalizeRoute} />;
+      return (
+        <ActivedRoute
+          onCancelRoute={cancelRoute}
+          onFinalizeRoute={finalizeRoute}
+        />
+      );
     }
   }, [
     routeStatus,
@@ -146,40 +188,71 @@ export default function Main({navigation}) {
     startRoute,
     closeResultRoute,
   ]);
-
+  const [cameraOn, setCameraOn] = useState(false);
   return (
     <Container>
-      <MapBox>
-        {currentLocation ? (
-          <Map location={currentLocation} route={route} status={routeStatus} />
-        ) : (
-          <ActivityIndicator size={20} />
-        )}
-      </MapBox>
-      {renderContent()}
+      {cameraOn ? (
+        <QRCameraReaderBox>
+          <ImageBackground
+            resizeMode="cover"
+            source={bgscanner}
+            style={styles.background}
+          />
+          <RNCamera
+            style={styles.camera}
+            onBarCodeRead={(e) => alert('Codigo da Van: ' + e.data)}
+          />
+        </QRCameraReaderBox>
+      ) : (
+        <ContainerPanel source={wp}>
+          <Header>
+            <Title>Olá, Luiz</Title>
+            <Logout>
+              <MDIcon name="logout" size={25} color="#999" />
+            </Logout>
+          </Header>
+
+          <BoxButtons>
+            <ButtonScanner onPress={() => setCameraOn(true)}>
+              <MDIcon name="qrcode-scan" size={29} color="#fff" />
+              <ButtonScannerText>Iniciar Viagem</ButtonScannerText>
+            </ButtonScanner>
+            <ButtonAvailable>
+              <Icon name="event-available" size={29} color="#fff" />
+              <ButtonAvailableText>
+                Informar disponibilidade
+              </ButtonAvailableText>
+            </ButtonAvailable>
+          </BoxButtons>
+          {/* <MapBox>
+            {currentLocation ? (
+              <Map
+                location={currentLocation}
+                route={route}
+                status={routeStatus}
+              />
+            ) : (
+              <ActivityIndicator size={20} />
+            )}
+          </MapBox> */}
+        </ContainerPanel>
+      )}
     </Container>
   );
 }
 
-Main.navigationOptions = ({navigation}) => {
-  const status = navigation.getParam('status');
-  let title = '';
-  switch (status) {
-    case ROUTE_STATUS.RECORDING:
-      title = 'Gravando Rota';
-      break;
-    case ROUTE_STATUS.DESACTIVED:
-      title = 'Rotas';
-      break;
-    case ROUTE_STATUS.FINALIZED:
-      title = 'Resumo da Viagem';
-      break;
-    case ROUTE_STATUS.ACTIVED:
-      title = 'Rota Ativa';
-      break;
-  }
-
-  return {
-    title,
-  };
-};
+const styles = StyleSheet.create({
+  camera: {
+    zIndex: 1,
+    alignSelf: 'center',
+    height: '100%',
+    width: '100%',
+  },
+  background: {
+    zIndex: 2,
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    flex: 1,
+  },
+});
