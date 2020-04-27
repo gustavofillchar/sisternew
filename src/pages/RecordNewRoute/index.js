@@ -16,35 +16,43 @@ export default function RecordNewRoute({navigation}) {
   const [scannerVisible, setScannerVisible] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
 
-  const route = useRef({amountStudents: 0});
+  const route = useRef({totalStudents: 0});
   const listenerPositionId = useRef();
 
   useEffect(() => {
     async function initRecordRoute() {
-      listenerPositionId.current = listenerUserPosition((location) => {
-        setCurrentLocation(location);
-      });
-
       const location = await getCurrentLocation();
+
+      listenerPositionId.current = await listenerUserPosition((coords) => {
+        console.log('NEW LOCATION: ', coords);
+        setCurrentLocation(coords);
+      });
       route.current.initialPosition = location;
+      route.current.initialTime = Date.now();
       setCurrentLocation(location);
     }
+
+    navigation.addListener('didFocus', () => {
+      initRecordRoute();
+    });
     initRecordRoute();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleReadQRCode = useCallback(({data}) => {
     console.log('DATA: ', data);
     setScannerVisible(false);
-    route.current.amountStudents++;
+    route.current.totalStudents++;
   }, []);
 
   const handleEndRoute = useCallback(
     async (finalPosition) => {
       console.log('FINAL: ', finalPosition);
       route.current.finalPosition = finalPosition;
+      route.current.finalTime = Date.now();
       stopPositionListener(listenerPositionId.current);
       await storeRouteInStorage(route.current);
-      navigation.navigate('Main');
+      navigation.navigate('RouteResult', {route: route.current});
     },
     [navigation],
   );

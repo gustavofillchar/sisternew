@@ -9,6 +9,7 @@ import Login from '~/pages/Login';
 import CheckAuth from './pages/CheckAuth';
 import ReadCar from './pages/ReadCar';
 import RecordNewRoute from './pages/RecordNewRoute';
+import RouteResult from './pages/RouteResult';
 
 const Routes = createAppContainer(
   createStackNavigator(
@@ -57,6 +58,12 @@ const Routes = createAppContainer(
       },
       Main: {
         screen: Main,
+        navigationOptions: {
+          headerShown: false,
+        },
+      },
+      RouteResult: {
+        screen: RouteResult,
         navigationOptions: {
           headerShown: false,
         },
