@@ -1,39 +1,41 @@
 import React from 'react';
-import {Container} from './styles';
+import {Container, ButtonClose, ButtonCloseText} from './styles';
 import {RNCamera} from 'react-native-camera';
-import {StyleSheet, ImageBackground} from 'react-native';
+import {StyleSheet, Dimensions, Image} from 'react-native';
+import Modal from 'react-native-modal';
 
 import bgscanner from '../../assets/bg.png';
 
-export default function QRCodeScanner({visible, onReadQRCode}) {
-  if (!visible) {
-    return null;
-  }
-
+export default function QRCodeScanner({visible, onReadQRCode, onClose}) {
   return (
-    <Container>
-      <ImageBackground
-        resizeMode="cover"
-        source={bgscanner}
-        style={styles.background}
-      />
-      <RNCamera style={styles.camera} onBarCodeRead={onReadQRCode} />
-    </Container>
+    <Modal isVisible={visible} style={styles.modal} useNativeDriver>
+      <Container>
+        <Image
+          resizeMode="cover"
+          source={bgscanner}
+          style={styles.background}
+        />
+        <RNCamera style={styles.camera} onBarCodeRead={onReadQRCode} />
+        <ButtonClose onPress={onClose}>
+          <ButtonCloseText>FECHAR</ButtonCloseText>
+        </ButtonClose>
+      </Container>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  modal: {
+    margin: 0,
+  },
   camera: {
-    zIndex: 1,
-    alignSelf: 'center',
     height: '100%',
     width: '100%',
   },
   background: {
-    zIndex: 2,
     position: 'absolute',
-    height: '100%',
-    width: '100%',
-    flex: 1,
+    zIndex: 1,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
 });

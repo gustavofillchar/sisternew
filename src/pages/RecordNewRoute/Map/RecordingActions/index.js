@@ -14,11 +14,11 @@ export default function RecordingActions({onFinalizeRoute, onReadQRCode}) {
   }, [onReadQRCode]);
 
   return (
-    // <Container>
-    <ActionsBar
-      onEndRoute={handleFinalizeRoute}
-      onReadQRCode={handleReadQRCode}
-    />
-    // </Container>
+    <Container>
+      <ActionsBar
+        onEndRoute={handleFinalizeRoute}
+        onReadQRCode={handleReadQRCode}
+      />
+    </Container>
   );
 }

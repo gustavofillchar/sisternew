@@ -1,6 +1,6 @@
 import React from 'react';
 import MapView, {Marker} from 'react-native-maps';
-import {Image} from 'react-native';
+import {Image, StyleSheet} from 'react-native';
 
 import {Container} from './styles';
 import RecordingActions from './RecordingActions';
@@ -16,7 +16,7 @@ export default function Map({location, onFinalizeRoute, onReadQRCode}) {
           longitudeDelta: 0.0102,
         }}
         loadingEnabled={true}
-        style={{height: '100%', width: '100%'}}>
+        style={styles.map}>
         <Marker title="Sua posição atual" coordinate={location}>
           <Image
             source={require('~/assets/car.png')}
@@ -31,3 +31,10 @@ export default function Map({location, onFinalizeRoute, onReadQRCode}) {
     </Container>
   );
 }
+
+const styles = StyleSheet.create({
+  map: {
+    height: '100%',
+    width: '100%',
+  },
+});

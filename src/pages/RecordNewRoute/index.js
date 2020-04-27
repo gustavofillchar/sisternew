@@ -16,7 +16,7 @@ export default function RecordNewRoute({navigation}) {
   const [scannerVisible, setScannerVisible] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
 
-  const route = useRef({});
+  const route = useRef({amountStudents: 0});
   const listenerPositionId = useRef();
 
   useEffect(() => {
@@ -33,7 +33,9 @@ export default function RecordNewRoute({navigation}) {
   }, []);
 
   const handleReadQRCode = useCallback(({data}) => {
+    console.log('DATA: ', data);
     setScannerVisible(false);
+    route.current.amountStudents++;
   }, []);
 
   const handleEndRoute = useCallback(
@@ -49,7 +51,11 @@ export default function RecordNewRoute({navigation}) {
 
   return (
     <Container>
-      <QRCodeScanner visible={scannerVisible} onReadQRCode={handleReadQRCode} />
+      <QRCodeScanner
+        visible={scannerVisible}
+        onReadQRCode={handleReadQRCode}
+        onClose={() => setScannerVisible(false)}
+      />
       {currentLocation ? (
         <Map
           location={currentLocation}
