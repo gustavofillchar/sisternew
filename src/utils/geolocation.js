@@ -2,8 +2,11 @@ import Geolocation from '@react-native-community/geolocation';
 
 export async function getCurrentLocation() {
   const geolocationPromise = new Promise((resolve, reject) => {
-    Geolocation.getCurrentPosition(position => {
-      const location = {latitude: position.coords.latitude, longitude: position.coords.longitude};
+    Geolocation.getCurrentPosition((position) => {
+      const location = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      };
       resolve(location);
     });
   });
@@ -12,10 +15,13 @@ export async function getCurrentLocation() {
 
 export async function listenerUserPosition(callback) {
   const watchId = Geolocation.watchPosition(
-    position => {
-      callback({latitude: position.coords.latitude, longitude: position.coords.longitude});
+    (position) => {
+      callback({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      });
     },
-    error => {
+    (error) => {
       console.warn(error);
     },
     {

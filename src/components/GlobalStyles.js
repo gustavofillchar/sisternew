@@ -7,10 +7,18 @@ export const Separator = styled.View`
 `;
 
 export const Margin = styled.View`
-  margin-top: ${props => (props.top ? props.top : 0)}px;
-  margin-bottom: ${props => (props.bottom ? props.bottom : 0)}px;
-  margin-left: ${props => (props.left ? props.left : 0)}px;
-  margin-right: ${props => (props.right ? props.right : 0)}px;
-  margin: ${props => (props.vertical ? props.vertical : 0)}px ${props => (props.horizontal ? props.horizontal : 0)}px
-    ${props => (props.vertical ? props.vertical : 0)}px ${props => (props.horizontal ? props.horizontal : 0)}px;
+  margin-top: ${(props) => (props.top ? props.top : 0)}px;
+  margin-bottom: ${(props) => (props.bottom ? props.bottom : 0)}px;
+  margin-left: ${(props) => (props.left ? props.left : 0)}px;
+  margin-right: ${(props) => (props.right ? props.right : 0)}px;
+  margin: ${(props) => (props.vertical ? props.vertical : 0)}px
+    ${(props) => (props.horizontal ? props.horizontal : 0)}px
+    ${(props) => (props.vertical ? props.vertical : 0)}px
+    ${(props) => (props.horizontal ? props.horizontal : 0)}px;
+`;
+
+export const ContainerCentered = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
 `;

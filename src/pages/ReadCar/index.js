@@ -1,79 +1,45 @@
-/* eslint-disable react-native/no-inline-styles */
-import React, {useState, useEffect} from 'react';
-import {
-  StatusBar,
-  StyleSheet,
-  ImageBackground,
-  View,
-  Alert,
-} from 'react-native';
-import MDIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {
-  Container,
-  QRCameraReaderBox,
-  ContainerPanel,
-  Header,
-  Title,
-  TouchableHighlight,
-  Logout,
-  BoxButtons,
-  ButtonScanner,
-  ButtonScannerText,
-  ButtonAvailable,
-  ButtonAvailableText,
-} from './styles';
-import wp from '../../assets/van.jpg';
+import React, {useCallback} from 'react';
+import {StatusBar, StyleSheet, ImageBackground} from 'react-native';
+import {Container, QRCameraReaderBox} from './styles';
 
 import {RNCamera} from 'react-native-camera';
 
 import bgscanner from '../../assets/bg.png';
+import {navigateInGoogleMaps} from '~/utils/map-directions';
+import {getRouteFromStorage} from '~/storage/routes';
 
-export default function ReadCar() {
-  const [cameraOn, setCameraOn] = useState(false);
+export default function ReadCar({navigation}) {
+  const startRoute = useCallback(
+    async (vehicleId) => {
+      console.log(vehicleId);
+      const route = await getRouteFromStorage();
+      console.log(route);
+      if (route) {
+        navigateInGoogleMaps(route.initialPosition, route.finalPosition);
+      } else {
+        navigation.replace('RecordNewRoute');
+      }
+    },
+    [navigation],
+  );
 
   return (
     <Container>
-      <StatusBar
+      {/* <StatusBar
         barStyle={cameraOn ? 'light-content' : 'dark-content'}
         backgroundColor={cameraOn ? '#000' : '#fff'}
-      />
-
-      {cameraOn ? (
-        <QRCameraReaderBox>
-          <ImageBackground
-            resizeMode="cover"
-            source={bgscanner}
-            style={styles.background}
-          />
-          <RNCamera
-            style={styles.camera}
-            onBarCodeRead={(e) => alert('Codigo da Van: ' + e.data)}
-          />
-        </QRCameraReaderBox>
-      ) : (
-        <ContainerPanel source={wp}>
-          <Header>
-            <Title>Olá, Luiz</Title>
-            <Logout>
-              <MDIcon name="logout" size={25} color="#999" />
-            </Logout>
-          </Header>
-
-          <BoxButtons>
-            <ButtonScanner onPress={() => setCameraOn(true)}>
-              <MDIcon name="qrcode-scan" size={29} color="#fff" />
-              <ButtonScannerText>Iniciar Viagem</ButtonScannerText>
-            </ButtonScanner>
-            <ButtonAvailable>
-              <Icon name="event-available" size={29} color="#fff" />
-              <ButtonAvailableText>
-                Informar disponibilidade
-              </ButtonAvailableText>
-            </ButtonAvailable>
-          </BoxButtons>
-        </ContainerPanel>
-      )}
+      /> */}
+      <QRCameraReaderBox>
+        <ImageBackground
+          resizeMode="cover"
+          source={bgscanner}
+          style={styles.background}
+        />
+        <RNCamera
+          style={styles.camera}
+          onBarCodeRead={(e) => startRoute(e.data)}
+        />
+      </QRCameraReaderBox>
     </Container>
   );
 }

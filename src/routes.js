@@ -8,6 +8,7 @@ import TestRoutes from '~/pages/TestRoutes';
 import Login from '~/pages/Login';
 import CheckAuth from './pages/CheckAuth';
 import ReadCar from './pages/ReadCar';
+import RecordNewRoute from './pages/RecordNewRoute';
 
 const Routes = createAppContainer(
   createStackNavigator(
@@ -56,6 +57,12 @@ const Routes = createAppContainer(
       },
       Main: {
         screen: Main,
+        navigationOptions: {
+          headerShown: false,
+        },
+      },
+      RecordNewRoute: {
+        screen: RecordNewRoute,
         navigationOptions: {
           headerShown: false,
         },
