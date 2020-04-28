@@ -18,7 +18,6 @@ import {
 
 import logoapp from '../../assets/logoapp.png';
 import wp from '../../assets/van.jpg';
-import {storeUserDataInStorage} from '~/storage/user';
 import {storeTokenInStorage} from '~/storage/auth';
 
 export default function Login({navigation}) {

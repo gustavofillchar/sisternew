@@ -1,26 +1,37 @@
-import React, {useCallback} from 'react';
-import {StatusBar, StyleSheet, ImageBackground} from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
+import {StyleSheet, Image, ActivityIndicator} from 'react-native';
 import {Container, QRCameraReaderBox} from './styles';
 
 import {RNCamera} from 'react-native-camera';
 
 import bgscanner from '../../assets/bg.png';
-import {navigateInGoogleMaps} from '~/utils/map-directions';
-import {getRouteFromStorage} from '~/storage/routes';
+import {startRoute} from '~/services/api';
+import {getCurrentLocation} from '~/utils/geolocation';
 
 export default function ReadCar({navigation}) {
-  const startRoute = useCallback(
+  const {current: user} = useRef(navigation.getParam('user'));
+  const [scanning, setScanning] = useState(false);
+
+  const initRoute = useCallback(
     async (vehicleId) => {
-      console.log(vehicleId);
-      const route = await getRouteFromStorage();
-      console.log(route);
-      if (route) {
-        navigateInGoogleMaps(route.initialPosition, route.finalPosition);
-      } else {
-        navigation.replace('RecordNewRoute');
-      }
+      // const route = await getRouteFromStorage();
+      setScanning(true);
+      const coords = await getCurrentLocation();
+      const route = await startRoute(
+        vehicleId,
+        user.prefecture_id,
+        coords.latitude,
+        coords.longitude,
+      );
+      setScanning(false);
+      console.tron(route);
+      // if (route.new_route) {
+      navigation.replace('RecordNewRoute', {route});
+      // } else {
+      // navigateInGoogleMaps(route.initialPosition, route.finalPosition);
+      // }
     },
-    [navigation],
+    [navigation, user],
   );
 
   return (
@@ -30,15 +41,26 @@ export default function ReadCar({navigation}) {
         backgroundColor={cameraOn ? '#000' : '#fff'}
       /> */}
       <QRCameraReaderBox>
-        <ImageBackground
+        <Image
           resizeMode="cover"
           source={bgscanner}
           style={styles.background}
         />
         <RNCamera
           style={styles.camera}
-          onBarCodeRead={(e) => startRoute(e.data)}
+          onBarCodeRead={(e) => {
+            if (!scanning) {
+              initRoute(e.data);
+            }
+          }}
         />
+        {scanning && (
+          <ActivityIndicator
+            size={70}
+            color="#fff"
+            style={styles.positionRigthBottom}
+          />
+        )}
       </QRCameraReaderBox>
     </Container>
   );
@@ -57,5 +79,11 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     flex: 1,
+  },
+  positionRigthBottom: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 3,
   },
 });

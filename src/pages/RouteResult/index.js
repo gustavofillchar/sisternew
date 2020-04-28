@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import {
   Info,
   Title,
@@ -11,12 +11,46 @@ import {
   ContainerInfo,
 } from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Separator} from '~/components/GlobalStyles';
+import {Separator, ContainerCentered} from '~/components/GlobalStyles';
 import {format} from 'date-fns';
 import {distaceBetweenTwoPoints} from '~/utils/geolocation';
+import {closeRoute} from '~/services/api';
+import {ActivityIndicator} from 'react-native';
+import {getNowDateFormmated} from '~/utils/date';
 
 export default function RouteResult({navigation}) {
+  const [loading, setLoading] = useState(true);
+
   const {current: route} = useRef(navigation.getParam('route'));
+  const {current: kms} = useRef(
+    distaceBetweenTwoPoints(route.initialPosition, route.finalPosition).toFixed(
+      2,
+    ),
+  );
+
+  useEffect(() => {
+    navigation.addListener('didFocus', async () => {
+      console.log('ROUTE: ', route);
+      setLoading(true);
+      await closeRoute(
+        route.id_worked_route,
+        route.defined_route_id.defined_route_id,
+        route.finalPosition.latitude,
+        route.finalPosition.longitude,
+        kms,
+        getNowDateFormmated(),
+      );
+      setLoading(false);
+    });
+  }, [kms, navigation, route]);
+
+  if (loading) {
+    return (
+      <ContainerCentered>
+        <ActivityIndicator size={40} color="#C10C19" />
+      </ContainerCentered>
+    );
+  }
 
   return (
     <ContainerInfo>
@@ -48,39 +82,33 @@ export default function RouteResult({navigation}) {
         <DescriptTitle>Distância Percorrida</DescriptTitle>
       </BoxTripDetail>
       <InfoBoxDescript>
-        <InfoDescriptText>
-          {distaceBetweenTwoPoints(
-            route.initialPosition,
-            route.finalPosition,
-          ).toFixed(2)}{' '}
-          km
-        </InfoDescriptText>
+        <InfoDescriptText>{kms} km</InfoDescriptText>
       </InfoBoxDescript>
 
       <Separator />
-      <BoxTripDetail>
+      {/* <BoxTripDetail>
         <Icon name="school" size={25} color="#555" />
         <DescriptTitle>Total de Alunos</DescriptTitle>
       </BoxTripDetail>
       <InfoBoxDescript>
         <InfoDescriptText>{route.totalStudents} alunos</InfoDescriptText>
-      </InfoBoxDescript>
+      </InfoBoxDescript> */}
 
       <BoxTripDetail>
         <Icon name="bus-school" size={25} color="#555" />
         <DescriptTitle>Alunos Transportados</DescriptTitle>
       </BoxTripDetail>
       <InfoBoxDescript>
-        <InfoDescriptText>8 alunos</InfoDescriptText>
+        <InfoDescriptText>{route.totalStudents} alunos</InfoDescriptText>
       </InfoBoxDescript>
 
-      <BoxTripDetail>
+      {/* <BoxTripDetail>
         <Icon name="not-equal-variant" size={25} color="#555" />
         <DescriptTitle>Alunos Faltantes</DescriptTitle>
       </BoxTripDetail>
       <InfoBoxDescript>
         <InfoDescriptText>6 alunos</InfoDescriptText>
-      </InfoBoxDescript>
+      </InfoBoxDescript> */}
 
       {/* <BoxTripDetail>
         <Icon name="map-marker-check" size={25} color="#555" />

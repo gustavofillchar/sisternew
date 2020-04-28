@@ -8,3 +8,7 @@ export async function getTokenFromStorage() {
   const token = await AsyncStorage.getItem('token');
   return token;
 }
+
+export async function destroyToken() {
+  await AsyncStorage.removeItem('token');
+}

@@ -4,19 +4,11 @@ export const Container = styled.View`
   flex: 1;
 `;
 
-export const QRCameraReaderBox = styled.ImageBackground`
+export const QRCameraReaderBox = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
 `;
-
-{
-  /* <ContainerPanel>
-<Header>
-  <Title>Olá, Nome de Usuário</Title>
-</Header>
-</ContainerPanel> */
-}
 
 export const ContainerPanel = styled.ImageBackground`
   background-color: #333;

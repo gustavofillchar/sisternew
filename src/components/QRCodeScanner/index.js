@@ -1,23 +1,44 @@
 import React from 'react';
 import {Container, ButtonClose, ButtonCloseText} from './styles';
 import {RNCamera} from 'react-native-camera';
-import {StyleSheet, Dimensions, Image} from 'react-native';
+import {StyleSheet, Dimensions, Image, ActivityIndicator} from 'react-native';
 import Modal from 'react-native-modal';
 
 import bgscanner from '../../assets/bg.png';
 
-export default function QRCodeScanner({visible, onReadQRCode, onClose}) {
+export default function QRCodeScanner({
+  visible,
+  scanning,
+  onReadQRCode,
+  onClose,
+}) {
   return (
-    <Modal isVisible={visible} style={styles.modal} useNativeDriver>
+    <Modal
+      isVisible={visible}
+      style={styles.modal}
+      useNativeDriver
+      onBackButtonPress={onClose}>
       <Container>
         <Image
           resizeMode="cover"
           source={bgscanner}
           style={styles.background}
         />
-        <RNCamera style={styles.camera} onBarCodeRead={onReadQRCode} />
-        <ButtonClose onPress={onClose}>
-          <ButtonCloseText>FECHAR</ButtonCloseText>
+        <RNCamera
+          style={styles.camera}
+          onBarCodeRead={(event) => {
+            console.tron('SCANNING: ', scanning);
+            if (!scanning) {
+              onReadQRCode(event.data);
+            }
+          }}
+        />
+        <ButtonClose onPress={onClose} disabled={scanning}>
+          {scanning ? (
+            <ActivityIndicator size={30} color="#fff" />
+          ) : (
+            <ButtonCloseText>FECHAR</ButtonCloseText>
+          )}
         </ButtonClose>
       </Container>
     </Modal>

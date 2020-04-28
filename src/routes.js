@@ -10,6 +10,7 @@ import CheckAuth from './pages/CheckAuth';
 import ReadCar from './pages/ReadCar';
 import RecordNewRoute from './pages/RecordNewRoute';
 import RouteResult from './pages/RouteResult';
+import StudentID from './pages/StudentID';
 
 const Routes = createAppContainer(
   createStackNavigator(
@@ -73,6 +74,9 @@ const Routes = createAppContainer(
         navigationOptions: {
           headerShown: false,
         },
+      },
+      StudentID: {
+        screen: StudentID,
       },
       CheckAuth: {
         screen: CheckAuth,

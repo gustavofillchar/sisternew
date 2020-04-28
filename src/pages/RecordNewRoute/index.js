@@ -11,12 +11,18 @@ import {
 import {storeRouteInStorage} from '~/storage/routes';
 import {ContainerCentered} from '~/components/GlobalStyles';
 import {ActivityIndicator} from 'react-native';
+import {scannerStudentQRCode} from '~/services/api';
+import {getNowDateFormmated} from '~/utils/date';
 
 export default function RecordNewRoute({navigation}) {
   const [scannerVisible, setScannerVisible] = useState(false);
+  const [scanning, setScanning] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
 
-  const route = useRef({totalStudents: 0});
+  const route = useRef({
+    ...navigation.getParam('route'),
+    totalStudents: 0,
+  });
   const listenerPositionId = useRef();
 
   useEffect(() => {
@@ -39,11 +45,24 @@ export default function RecordNewRoute({navigation}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleReadQRCode = useCallback(({data}) => {
-    console.log('DATA: ', data);
-    setScannerVisible(false);
-    route.current.totalStudents++;
-  }, []);
+  const handleReadQRCode = useCallback(
+    async (studentCode) => {
+      setScanning(true);
+      const coords = await getCurrentLocation();
+      const studentData = await scannerStudentQRCode(
+        route.current.id_worked_route,
+        studentCode,
+        coords.latitude,
+        coords.longitude,
+        getNowDateFormmated(),
+      );
+      route.current.totalStudents++;
+      setScannerVisible(false);
+      navigation.navigate('StudentID', {student: studentData.pupil});
+      setScanning(false);
+    },
+    [navigation, route],
+  );
 
   const handleEndRoute = useCallback(
     async (finalPosition) => {
@@ -54,7 +73,7 @@ export default function RecordNewRoute({navigation}) {
       await storeRouteInStorage(route.current);
       navigation.navigate('RouteResult', {route: route.current});
     },
-    [navigation],
+    [navigation, route],
   );
 
   return (
@@ -63,6 +82,7 @@ export default function RecordNewRoute({navigation}) {
         visible={scannerVisible}
         onReadQRCode={handleReadQRCode}
         onClose={() => setScannerVisible(false)}
+        scanning={scanning}
       />
       {currentLocation ? (
         <Map
@@ -72,7 +92,7 @@ export default function RecordNewRoute({navigation}) {
         />
       ) : (
         <ContainerCentered>
-          <ActivityIndicator />
+          <ActivityIndicator size={30} color="#C10C19" />
         </ContainerCentered>
       )}
     </Container>
