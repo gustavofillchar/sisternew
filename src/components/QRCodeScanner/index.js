@@ -1,5 +1,12 @@
 import React from 'react';
-import {Container, ButtonClose, ButtonCloseText} from './styles';
+import {
+  Container,
+  ButtonClose,
+  ButtonCloseText,
+  ErrorMessage,
+  ErrorTitle,
+  ErrorContainer,
+} from './styles';
 import {RNCamera} from 'react-native-camera';
 import {StyleSheet, Dimensions, Image, ActivityIndicator} from 'react-native';
 import Modal from 'react-native-modal';
@@ -9,6 +16,7 @@ import bgscanner from '../../assets/bg.png';
 export default function QRCodeScanner({
   visible,
   scanning,
+  error,
   onReadQRCode,
   onClose,
 }) {
@@ -27,7 +35,6 @@ export default function QRCodeScanner({
         <RNCamera
           style={styles.camera}
           onBarCodeRead={(event) => {
-            console.tron('SCANNING: ', scanning);
             if (!scanning) {
               onReadQRCode(event.data);
             }
@@ -40,6 +47,15 @@ export default function QRCodeScanner({
             <ButtonCloseText>FECHAR</ButtonCloseText>
           )}
         </ButtonClose>
+        {error && (
+          <ErrorContainer>
+            <ErrorTitle>Ocorreu um erro ao ler o QRCode.</ErrorTitle>
+            <ErrorMessage>
+              Tenha certeza de ser um QRCode válido ou verifique sua conexão com
+              a internet
+            </ErrorMessage>
+          </ErrorContainer>
+        )}
       </Container>
     </Modal>
   );

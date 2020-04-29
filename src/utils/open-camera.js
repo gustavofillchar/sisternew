@@ -5,6 +5,5 @@ export default async function openCamera() {
     width: 300,
     height: 400,
   });
-  console.log(image);
   return image;
 }

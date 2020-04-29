@@ -77,3 +77,12 @@ export const ButtonAvailableText = styled.Text`
   font-weight: 700;
   margin-left: 20px;
 `;
+
+export const ErrorMessage = styled.Text`
+  position: absolute;
+  bottom: 20px;
+  text-align: center;
+  color: #fff;
+  font-size: 16px;
+  z-index: 2;
+`;

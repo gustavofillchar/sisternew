@@ -11,11 +11,11 @@ export function navigateInGoogleMaps(initialPosition, finalPosition) {
     params: [
       {
         key: 'travelmode',
-        value: 'driving', // may be "walking", "bicycling" or "transit" as well
+        value: 'driving',
       },
       {
         key: 'dir_action',
-        value: 'navigate', // this instantly initializes navigation using the given travel mode
+        value: 'navigate',
       },
     ],
   };

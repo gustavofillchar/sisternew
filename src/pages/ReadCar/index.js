@@ -1,6 +1,6 @@
 import React, {useCallback, useRef, useState} from 'react';
 import {StyleSheet, Image, ActivityIndicator} from 'react-native';
-import {Container, QRCameraReaderBox} from './styles';
+import {Container, QRCameraReaderBox, ErrorMessage} from './styles';
 
 import {RNCamera} from 'react-native-camera';
 
@@ -11,25 +11,33 @@ import {getCurrentLocation} from '~/utils/geolocation';
 export default function ReadCar({navigation}) {
   const {current: user} = useRef(navigation.getParam('user'));
   const [scanning, setScanning] = useState(false);
+  const [scanError, setScanError] = useState(false);
 
   const initRoute = useCallback(
     async (vehicleId) => {
       // const route = await getRouteFromStorage();
+      setScanError(false);
       setScanning(true);
-      const coords = await getCurrentLocation();
-      const route = await startRoute(
-        vehicleId,
-        user.prefecture_id,
-        coords.latitude,
-        coords.longitude,
-      );
-      setScanning(false);
-      console.tron(route);
-      // if (route.new_route) {
-      navigation.replace('RecordNewRoute', {route});
-      // } else {
-      // navigateInGoogleMaps(route.initialPosition, route.finalPosition);
-      // }
+      try {
+        const coords = await getCurrentLocation();
+        const route = await startRoute(
+          vehicleId,
+          user.prefecture_id,
+          coords.latitude,
+          coords.longitude,
+        );
+        // console.tron(route);
+        // if (route.new_route) {
+        navigation.replace('RecordNewRoute', {route});
+        // } else {
+        // navigateInGoogleMaps(route.initialPosition, route.finalPosition);
+        // }
+      } catch (error) {
+        console.warn(error);
+        setScanError(true);
+      } finally {
+        setScanning(false);
+      }
     },
     [navigation, user],
   );
@@ -56,10 +64,13 @@ export default function ReadCar({navigation}) {
         />
         {scanning && (
           <ActivityIndicator
-            size={70}
+            size={50}
             color="#fff"
-            style={styles.positionRigthBottom}
+            style={styles.iconPosition}
           />
+        )}
+        {scanError && (
+          <ErrorMessage>Ocorreu um erro ao ler o QRCode</ErrorMessage>
         )}
       </QRCameraReaderBox>
     </Container>
@@ -80,7 +91,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
   },
-  positionRigthBottom: {
+  iconPosition: {
     position: 'absolute',
     top: 10,
     right: 10,

@@ -77,6 +77,9 @@ const Routes = createAppContainer(
       },
       StudentID: {
         screen: StudentID,
+        navigationOptions: {
+          headerShown: false,
+        },
       },
       CheckAuth: {
         screen: CheckAuth,
