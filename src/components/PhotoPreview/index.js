@@ -1,6 +1,5 @@
 import React, {useState, useImperativeHandle, forwardRef} from 'react';
 import {Container, BoxImage, ImageProfile, IconBox} from './styles';
-import {Image, StyleSheet} from 'react-native';
 import MDIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
 
@@ -27,7 +26,7 @@ function PhotoPreview(
       includeBase64: true,
       cropping: true,
       useFrontCamera: true,
-    }).then(image => {
+    }).then((image) => {
       // console.log(image);
 
       setPhotoPreview({uri: 'data:image/jpeg;base64,' + image.data});

@@ -22,3 +22,7 @@ export const ContainerCentered = styled.View`
   align-items: center;
   justify-content: center;
 `;
+
+export const ContainerFullFlex = styled.View`
+  flex: 1;
+`;

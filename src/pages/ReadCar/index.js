@@ -13,10 +13,13 @@ export default function ReadCar({navigation}) {
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState(false);
 
+  const scanningHolder = useRef(false);
+
   const initRoute = useCallback(
     async (vehicleId) => {
       // const route = await getRouteFromStorage();
       setScanError(false);
+      scanningHolder.current = true;
       setScanning(true);
       try {
         const coords = await getCurrentLocation();
@@ -57,7 +60,7 @@ export default function ReadCar({navigation}) {
         <RNCamera
           style={styles.camera}
           onBarCodeRead={(e) => {
-            if (!scanning) {
+            if (!scanningHolder.current) {
               initRoute(e.data);
             }
           }}

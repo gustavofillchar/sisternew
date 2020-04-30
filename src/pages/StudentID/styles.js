@@ -28,3 +28,10 @@ export const ConfirmText = styled.Text`
   color: #fff;
   font-size: 16px;
 `;
+
+export const CloseText = styled.Text`
+  font-weight: bold;
+  color: #444;
+  font-size: 18px;
+  text-align: center;
+`;

@@ -1,6 +1,6 @@
 import React from 'react';
 import MapView, {Marker} from 'react-native-maps';
-import {Image, StyleSheet} from 'react-native';
+import {Image, StyleSheet, Dimensions} from 'react-native';
 
 import {Container} from './styles';
 import RecordingActions from './RecordingActions';
@@ -34,7 +34,7 @@ export default function Map({location, onFinalizeRoute, onReadQRCode}) {
 
 const styles = StyleSheet.create({
   map: {
-    height: '100%',
-    width: '100%',
+    height: 300,
+    width: Dimensions.get('window').width,
   },
 });

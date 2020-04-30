@@ -5,12 +5,12 @@ import Action from './Action';
 export default function ActionsBar({onEndRoute, onReadQRCode}) {
   return (
     <Container>
-      <Action
+      {/* <Action
         iconName="qrcode-scan"
         description="Check-in Aluno"
         color="#66bb6a"
         onPress={onReadQRCode}
-      />
+      /> */}
       <Action
         iconName="flag"
         description="Finalizar Rota"

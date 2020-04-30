@@ -16,10 +16,11 @@ import {getNowDateFormmated} from '~/utils/date';
 import {alertConfirmRouteFinal} from '~/components/Alerts';
 
 export default function RecordNewRoute({navigation}) {
-  const [scannerVisible, setScannerVisible] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
+
+  const scanningHolder = useRef(false);
 
   const route = useRef({
     ...navigation.getParam('route'),
@@ -50,6 +51,7 @@ export default function RecordNewRoute({navigation}) {
   const handleReadQRCode = useCallback(
     async (studentCode) => {
       setScanning(true);
+      scanningHolder.current = true;
       setScanError(false);
       try {
         const coords = await getCurrentLocation();
@@ -61,13 +63,12 @@ export default function RecordNewRoute({navigation}) {
           getNowDateFormmated(),
         );
         route.current.totalStudents++;
-        setScannerVisible(false);
         navigation.navigate('StudentID', {student: studentData.pupil});
-        setScanning(false);
       } catch (error) {
         console.warn(error);
         setScanError(true);
       } finally {
+        scanningHolder.current = false;
         setScanning(false);
       }
     },
@@ -88,21 +89,21 @@ export default function RecordNewRoute({navigation}) {
 
   return (
     <Container>
-      <QRCodeScanner
-        visible={scannerVisible}
-        onReadQRCode={handleReadQRCode}
-        onClose={() => setScannerVisible(false)}
-        scanning={scanning}
-        error={scanError}
-      />
       {currentLocation ? (
-        <Map
-          location={currentLocation}
-          onFinalizeRoute={(finalPosition) => {
-            alertConfirmRouteFinal(() => handleEndRoute(finalPosition));
-          }}
-          onReadQRCode={() => setScannerVisible(true)}
-        />
+        <>
+          <Map
+            location={currentLocation}
+            onFinalizeRoute={(finalPosition) => {
+              alertConfirmRouteFinal(() => handleEndRoute(finalPosition));
+            }}
+            // onReadQRCode={() => setScannerVisible(true)}
+          />
+          <QRCodeScanner
+            onReadQRCode={handleReadQRCode}
+            scanning={scanningHolder.current}
+            error={scanError}
+          />
+        </>
       ) : (
         <ContainerCentered>
           <ActivityIndicator size={30} color="#C10C19" />

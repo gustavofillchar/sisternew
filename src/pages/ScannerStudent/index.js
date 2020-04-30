@@ -1,6 +1,6 @@
 import React from 'react';
 import {Container} from './styles';
-import QRCodeScanner from '~/components/QRCodeScanner';
+import QRCodeScanner from '~/components/QRCodeScannerModal';
 
 export default function ScannerStudent() {
   return (
