@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  useDebugValue,
-  useCallback,
-} from 'react';
+import React, {useRef, useState, useCallback} from 'react';
 import {
   Info,
   Title,
@@ -25,7 +19,6 @@ import {
 import {format} from 'date-fns';
 import {distaceBetweenTwoPoints} from '~/utils/geolocation';
 import {closeRoute} from '~/services/api';
-import {ActivityIndicator} from 'react-native';
 import {getNowDateFormmated} from '~/utils/date';
 import QRCodeScanner from '~/components/QRCodeScanner';
 

@@ -20,13 +20,17 @@ export function distaceBetweenTwoPoints(initialPoint, finalPoint) {
 
 export async function getCurrentLocation() {
   const geolocationPromise = new Promise((resolve, reject) => {
-    Geolocation.getCurrentPosition((position) => {
-      const location = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      };
-      resolve(location);
-    });
+    Geolocation.getCurrentPosition(
+      (position) => {
+        const location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+        resolve(location);
+      },
+      () => {},
+      {enableHighAccuracy: true},
+    );
   });
   return geolocationPromise;
 }
