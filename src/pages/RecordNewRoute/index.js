@@ -18,6 +18,7 @@ import {alertConfirmRouteFinal} from '~/components/Alerts';
 export default function RecordNewRoute({navigation}) {
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState(false);
+  const [coordinates, setCoordinates] = useState([]);
   const [currentLocation, setCurrentLocation] = useState(null);
 
   const scanningHolder = useRef(false);
@@ -32,8 +33,10 @@ export default function RecordNewRoute({navigation}) {
     async function initRecordRoute() {
       const location = await getCurrentLocation();
 
+      setCoordinates([location]);
       listenerPositionId.current = await listenerUserPosition((coords) => {
         console.log('NEW LOCATION: ', coords);
+        setCoordinates((prev) => [...prev, coords]);
         setCurrentLocation(coords);
       });
       route.current.initialPosition = location;
@@ -96,6 +99,7 @@ export default function RecordNewRoute({navigation}) {
             onFinalizeRoute={(finalPosition) => {
               alertConfirmRouteFinal(() => handleEndRoute(finalPosition));
             }}
+            coordinates={coordinates}
             // onReadQRCode={() => setScannerVisible(true)}
           />
           <QRCodeScanner

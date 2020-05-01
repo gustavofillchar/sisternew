@@ -1,11 +1,17 @@
 import React from 'react';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, Polyline} from 'react-native-maps';
 import {Image, StyleSheet, Dimensions} from 'react-native';
 
 import {Container} from './styles';
 import RecordingActions from './RecordingActions';
 
-export default function Map({location, onFinalizeRoute, onReadQRCode}) {
+export default function Map({
+  location,
+  coordinates,
+  onFinalizeRoute,
+  onReadQRCode,
+}) {
+  console.log('COORDINATES: ', coordinates);
   return (
     <Container>
       <MapView
@@ -17,6 +23,11 @@ export default function Map({location, onFinalizeRoute, onReadQRCode}) {
         }}
         loadingEnabled={true}
         style={styles.map}>
+        <Polyline
+          coordinates={coordinates}
+          strokeWidth={3}
+          strokeColor="#C10C19"
+        />
         <Marker title="Sua posição atual" coordinate={location}>
           <Image
             source={require('~/assets/car.png')}
