@@ -35,6 +35,7 @@ export default function RecordNewRoute({navigation}) {
 
       setCoordinates([location]);
       listenerPositionId.current = await listenerUserPosition((coords) => {
+        console.log('NEW POSITION: ', coords);
         setCoordinates((prev) => [...prev, coords]);
         setCurrentLocation(coords);
       });

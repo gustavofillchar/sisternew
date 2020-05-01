@@ -28,7 +28,9 @@ export async function getCurrentLocation() {
         };
         resolve(location);
       },
-      () => {},
+      (error) => {
+        console.warn(error);
+      },
       {enableHighAccuracy: true},
     );
   });
@@ -47,7 +49,6 @@ export async function listenerUserPosition(callback) {
       console.warn(error);
     },
     {
-      useSignificantChanges: true,
       enableHighAccuracy: true,
     },
   );
