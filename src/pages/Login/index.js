@@ -29,7 +29,7 @@ export default function Login({navigation}) {
   const [numberClick, setNumberClick] = useState(0);
   const [editable, setEditable] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  console.log('LOGINN');
+
   const loginUser = useCallback(() => {
     setLogging(true);
     if (hasError) {

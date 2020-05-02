@@ -3,6 +3,7 @@ import {ActivityIndicator} from 'react-native';
 import {Container} from './styles';
 import {getDateLoginFromStorage} from '~/storage/auth';
 import {isSameDay} from 'date-fns';
+
 export default function CheckAuth({navigation}) {
   useEffect(() => {
     async function checkAuth() {

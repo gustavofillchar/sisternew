@@ -11,11 +11,7 @@ import {
   ContainerInfo,
 } from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {
-  Separator,
-  ContainerCentered,
-  ContainerFullFlex,
-} from '~/components/GlobalStyles';
+import {Separator, ContainerFullFlex} from '~/components/GlobalStyles';
 import {format} from 'date-fns';
 import {distaceBetweenTwoPoints} from '~/utils/geolocation';
 import {closeRoute} from '~/services/api';
