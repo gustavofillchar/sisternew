@@ -18,7 +18,7 @@ import {
 
 import logoapp from '../../assets/logoapp.png';
 import wp from '../../assets/van.jpg';
-import {storeTokenInStorage} from '~/storage/auth';
+import {storeTokenInStorage, storeDateLoginInStorage} from '~/storage/auth';
 
 export default function Login({navigation}) {
   const [userName, setUserName] = useState(''); // input do usuario
@@ -29,7 +29,7 @@ export default function Login({navigation}) {
   const [numberClick, setNumberClick] = useState(0);
   const [editable, setEditable] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
+  console.log('LOGINN');
   const loginUser = useCallback(() => {
     setLogging(true);
     if (hasError) {
@@ -43,6 +43,7 @@ export default function Login({navigation}) {
       })
       .then(async (response) => {
         await storeTokenInStorage(response.data.access_token);
+        await storeDateLoginInStorage();
         navigation.replace('Main', {user: response.data});
         setUserName('');
         setPassword('');

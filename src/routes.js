@@ -25,6 +25,12 @@ const Routes = createAppContainer(
           headerTintColor: '#fff',
         },
       },
+      CheckAuth: {
+        screen: CheckAuth,
+        navigationOptions: {
+          headerShown: false,
+        },
+      },
       Login: {
         screen: Login,
         navigationOptions: {
@@ -77,12 +83,6 @@ const Routes = createAppContainer(
       },
       StudentID: {
         screen: StudentID,
-        navigationOptions: {
-          headerShown: false,
-        },
-      },
-      CheckAuth: {
-        screen: CheckAuth,
         navigationOptions: {
           headerShown: false,
         },

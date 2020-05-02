@@ -1,19 +1,21 @@
 import React, {useEffect} from 'react';
 import {ActivityIndicator} from 'react-native';
 import {Container} from './styles';
-import {getTokenFromStorage} from '~/storage/auth';
-
+import {getDateLoginFromStorage} from '~/storage/auth';
+import {isSameDay} from 'date-fns';
 export default function CheckAuth({navigation}) {
   useEffect(() => {
     async function checkAuth() {
-      if (await getTokenFromStorage()) {
-        navigation.replace('Main');
+      const dateLogin = await getDateLoginFromStorage();
+      if (isSameDay(dateLogin, Date.now())) {
+        navigation.navigate('Main');
       } else {
-        navigation.replace('Login');
+        navigation.navigate('Login');
       }
     }
     checkAuth();
-  }, [navigation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Container>
