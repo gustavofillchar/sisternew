@@ -29,10 +29,7 @@ export default function Map({
           strokeColor="#C10C19"
         />
         <Marker title="Sua posição atual" coordinate={location}>
-          <Image
-            source={require('~/assets/car.png')}
-            style={{width: 20, height: 20}}
-          />
+          <Image source={require('~/assets/car.png')} style={styles.carImage} />
         </Marker>
       </MapView>
       <RecordingActions
@@ -47,5 +44,9 @@ const styles = StyleSheet.create({
   map: {
     height: 300,
     width: Dimensions.get('window').width,
+  },
+  carImage: {
+    width: 20,
+    height: 20,
   },
 });

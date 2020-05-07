@@ -25,14 +25,16 @@ export default function RecordNewRoute({navigation}) {
 
   const route = useRef({
     ...navigation.getParam('route'),
+    stops: [],
     totalStudents: 0,
   });
   const listenerPositionId = useRef();
 
   useEffect(() => {
     async function initRecordRoute() {
-      const location = await getCurrentLocation();
+      console.log('INIT ROUTE');
 
+      const location = await getCurrentLocation();
       setCoordinates([location]);
       listenerPositionId.current = await listenerUserPosition((coords) => {
         console.log('NEW POSITION: ', coords);
@@ -45,7 +47,9 @@ export default function RecordNewRoute({navigation}) {
     }
 
     navigation.addListener('didFocus', () => {
-      initRecordRoute();
+      if (coordinates.length > 0) {
+        initRecordRoute();
+      }
     });
     initRecordRoute();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,6 +70,7 @@ export default function RecordNewRoute({navigation}) {
           getNowDateFormmated(),
         );
         route.current.totalStudents++;
+        route.current.stops.push(coords);
         navigation.navigate('StudentID', {student: studentData.pupil});
       } catch (error) {
         console.warn(error);
@@ -84,6 +89,7 @@ export default function RecordNewRoute({navigation}) {
       route.current.finalPosition = finalPosition;
       route.current.finalTime = Date.now();
       stopPositionListener(listenerPositionId.current);
+      setCoordinates([]);
       await storeRouteInStorage(route.current);
       navigation.navigate('RouteResult', {route: route.current});
     },

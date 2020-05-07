@@ -25,7 +25,7 @@ export default function ReadCar({navigation}) {
         const coords = await getCurrentLocation();
         const route = await startRoute(
           vehicleId,
-          user.prefecture_id,
+          user.driver.prefecture_id,
           coords.latitude,
           coords.longitude,
         );

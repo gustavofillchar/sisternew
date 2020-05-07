@@ -21,4 +21,5 @@ export async function getTokenFromStorage() {
 export async function destroyToken() {
   await AsyncStorage.removeItem('token');
   await AsyncStorage.removeItem('date-login');
+  await AsyncStorage.removeItem('user-data');
 }

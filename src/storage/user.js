@@ -5,6 +5,7 @@ export async function storeUserDataInStorage(userData) {
 }
 
 export async function getUserDataFromStorage() {
-  const userData = JSON.parse(await AsyncStorage.getItem('user-data')) || undefined;
+  const userData =
+    JSON.parse(await AsyncStorage.getItem('user-data')) || undefined;
   return userData;
 }

@@ -1,4 +1,4 @@
-import React, {useRef, useState, useCallback} from 'react';
+import React, {useRef, useState, useCallback, useEffect} from 'react';
 import {
   Info,
   Title,
@@ -17,6 +17,8 @@ import {distaceBetweenTwoPoints} from '~/utils/geolocation';
 import {closeRoute} from '~/services/api';
 import {getNowDateFormmated} from '~/utils/date';
 import QRCodeScanner from '~/components/QRCodeScanner';
+import MapView, {Marker} from 'react-native-maps';
+import {Image, StyleSheet} from 'react-native';
 
 export default function RouteResult({navigation}) {
   const [loading, setLoading] = useState(false);
@@ -58,6 +60,27 @@ export default function RouteResult({navigation}) {
 
   return (
     <ContainerInfo>
+      <MapView
+        style={styles.map}
+        region={{
+          latitude: route.finalPosition.latitude,
+          longitude: route.finalPosition.longitude,
+          latitudeDelta: 0.0102,
+          longitudeDelta: 0.0102,
+        }}>
+        <Marker coordinate={route.initialPosition} pinColor="#0f0" />
+        <Marker coordinate={route.finalPosition} />
+        {route.stops.map((stop, index) => {
+          return (
+            <Marker key={index.toString()} coordinate={stop}>
+              <Image
+                source={require('~/assets/stop-sign.png')}
+                style={styles.stopSign}
+              />
+            </Marker>
+          );
+        })}
+      </MapView>
       <Info>
         <Title>Resumo da Viagem</Title>
       </Info>
@@ -131,3 +154,14 @@ export default function RouteResult({navigation}) {
     </ContainerInfo>
   );
 }
+
+const styles = StyleSheet.create({
+  map: {
+    width: '100%',
+    height: 300,
+  },
+  stopSign: {
+    width: 10,
+    height: 10,
+  },
+});
