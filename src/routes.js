@@ -11,6 +11,7 @@ import ReadCar from './pages/ReadCar';
 import RecordNewRoute from './pages/RecordNewRoute';
 import RouteResult from './pages/RouteResult';
 import StudentID from './pages/StudentID';
+import ScannerStudent from './pages/ScannerStudent';
 
 const Routes = createAppContainer(
   createStackNavigator(
@@ -83,6 +84,12 @@ const Routes = createAppContainer(
       },
       StudentID: {
         screen: StudentID,
+        navigationOptions: {
+          headerShown: false,
+        },
+      },
+      ScannerStudent: {
+        screen: ScannerStudent,
         navigationOptions: {
           headerShown: false,
         },

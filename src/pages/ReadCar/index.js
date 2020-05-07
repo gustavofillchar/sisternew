@@ -7,6 +7,7 @@ import {RNCamera} from 'react-native-camera';
 import bgscanner from '../../assets/bg.png';
 import {startRoute} from '~/services/api';
 import {getCurrentLocation} from '~/utils/geolocation';
+import {navigateInGoogleMaps} from '~/utils/map-directions';
 
 export default function ReadCar({navigation}) {
   const {current: user} = useRef(navigation.getParam('user'));
@@ -29,16 +30,31 @@ export default function ReadCar({navigation}) {
           coords.latitude,
           coords.longitude,
         );
-        // console.tron(route);
-        // if (route.new_route) {
-        navigation.replace('RecordNewRoute', {route});
-        // } else {
-        // navigateInGoogleMaps(route.initialPosition, route.finalPosition);
-        // }
+        console.log(route.defined_route_id.lat_end);
+        if (route.new_route) {
+          navigation.replace('RecordNewRoute', {route});
+        } else {
+          navigateInGoogleMaps(
+            {
+              latitude: isNaN(route.defined_route_id.lat_start)
+                ? coords.latitude
+                : parseFloat(route.defined_route_id.lat_start),
+              longitude: isNaN(route.defined_route_id.lng_start)
+                ? coords.longitude
+                : parseFloat(route.defined_route_id.lng_start),
+            },
+            {
+              latitude: parseFloat(route.defined_route_id.lat_end),
+              longitude: parseFloat(route.defined_route_id.lng_end),
+            },
+          );
+          navigation.replace('ScannerStudent', {route});
+        }
       } catch (error) {
         console.warn(error);
         setScanError(true);
       } finally {
+        scanningHolder.current = false;
         setScanning(false);
       }
     },

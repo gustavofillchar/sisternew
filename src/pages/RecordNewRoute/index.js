@@ -16,7 +16,7 @@ import {getNowDateFormmated} from '~/utils/date';
 import {alertConfirmRouteFinal} from '~/components/Alerts';
 
 export default function RecordNewRoute({navigation}) {
-  const [scanning, setScanning] = useState(false);
+  const [_, setScanning] = useState(false);
   const [scanError, setScanError] = useState(false);
   const [coordinates, setCoordinates] = useState([]);
   const [currentLocation, setCurrentLocation] = useState(null);

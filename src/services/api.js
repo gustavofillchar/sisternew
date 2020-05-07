@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {getTokenFromStorage} from '~/storage/auth';
+import md5 from 'md5';
 
 const api = axios.create({
   baseURL: 'https://api-sister.yellowsistemas.com.br/',
@@ -45,6 +46,7 @@ export async function startRoute(vehicleId, prefectureId, latStart, lngStart) {
   const formData = new FormData();
   formData.append('vehicle_id', vehicleId);
   formData.append('prefecture_id', prefectureId);
+  formData.append('code', md5(vehicleId));
   formData.append('lat_start', latStart);
   formData.append('lng_start', lngStart);
 
