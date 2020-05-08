@@ -11,7 +11,10 @@ import {StyleSheet, Image, ActivityIndicator} from 'react-native';
 
 import bgscanner from '../../assets/bg.png';
 
-function QRCodeScanner({scanning, error, onReadQRCode}, ref) {
+function QRCodeScanner(
+  {scanning, error, onReadQRCode, onCameraReady = () => {}},
+  ref,
+) {
   const camera = useRef();
 
   useImperativeHandle(ref, () => ({
@@ -31,6 +34,7 @@ function QRCodeScanner({scanning, error, onReadQRCode}, ref) {
             onReadQRCode(event.data);
           }
         }}
+        onCameraReady={onCameraReady}
       />
       <ButtonClose onPress={() => {}} disabled={true}>
         {scanning && <ActivityIndicator size={30} color="#fff" />}

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Container} from './styles';
-import Action from './Action';
+import Action from '~/components/Action';
 
 export default function ActionsBar({onEndRoute, onReadQRCode}) {
   return (

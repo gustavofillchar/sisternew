@@ -34,20 +34,23 @@ export default function ReadCar({navigation}) {
         if (route.new_route) {
           navigation.replace('RecordNewRoute', {route});
         } else {
-          navigateInGoogleMaps(
-            {
-              latitude: isNaN(route.defined_route_id.lat_start)
-                ? coords.latitude
-                : parseFloat(route.defined_route_id.lat_start),
-              longitude: isNaN(route.defined_route_id.lng_start)
-                ? coords.longitude
-                : parseFloat(route.defined_route_id.lng_start),
-            },
-            {
-              latitude: parseFloat(route.defined_route_id.lat_end),
-              longitude: parseFloat(route.defined_route_id.lng_end),
-            },
-          );
+          const initialPosition = {
+            latitude: isNaN(route.defined_route_id.lat_start)
+              ? coords.latitude
+              : parseFloat(route.defined_route_id.lat_start),
+            longitude: isNaN(route.defined_route_id.lng_start)
+              ? coords.longitude
+              : parseFloat(route.defined_route_id.lng_start),
+          };
+          const finalPosition = {
+            latitude: parseFloat(route.defined_route_id.lat_end),
+            longitude: parseFloat(route.defined_route_id.lng_end),
+          };
+
+          navigateInGoogleMaps(initialPosition, finalPosition);
+          route.initialPosition = initialPosition;
+          route.initialTime = Date.now();
+          route.totalStudents = 0;
           navigation.replace('ScannerStudent', {route});
         }
       } catch (error) {

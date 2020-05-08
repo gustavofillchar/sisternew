@@ -11,7 +11,6 @@ export default function Map({
   onFinalizeRoute,
   onReadQRCode,
 }) {
-  console.log('COORDINATES: ', coordinates);
   return (
     <Container>
       <MapView
