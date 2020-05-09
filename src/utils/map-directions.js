@@ -1,6 +1,11 @@
 import getDirections from 'react-native-google-maps-directions';
 
-export function navigateInGoogleMaps(initialPosition, finalPosition) {
+export function navigateInGoogleMaps(
+  initialPosition,
+  finalPosition,
+  stops = [],
+) {
+  console.log(stops);
   const data = {
     source: {
       ...initialPosition,
@@ -18,6 +23,7 @@ export function navigateInGoogleMaps(initialPosition, finalPosition) {
         value: 'navigate',
       },
     ],
+    waypoints: stops,
   };
 
   getDirections(data);

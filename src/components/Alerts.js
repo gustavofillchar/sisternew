@@ -6,3 +6,31 @@ export function alertConfirmRouteFinal(callback) {
     {text: 'Finalizar', onPress: () => callback()},
   ]);
 }
+
+export function alertChoose(newRouteCallback, routeDefinedCallback) {
+  Alert.alert(
+    'Escolha',
+    'Você deseja fazer uma nova rota ou ir por uma rota já definida?',
+    [
+      {text: 'Nova Rota', onPress: newRouteCallback},
+      {text: 'Rota Definida', onPress: routeDefinedCallback},
+    ],
+    {cancelable: false},
+  );
+}
+
+export function confirmCancelRoute(confirmCallback) {
+  Alert.alert(
+    'Aviso',
+    'Tem certeza que deseja sair da rota atual e perder todo progresso?',
+    [
+      {
+        text: 'Sair da Rota',
+        onPress: confirmCallback,
+      },
+      {
+        text: 'Cancelar',
+      },
+    ],
+  );
+}

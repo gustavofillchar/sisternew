@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {getTokenFromStorage} from '~/storage/auth';
 import md5 from 'md5';
+import {getNowDateFormmated} from '~/utils/date';
 
 const api = axios.create({
   baseURL: 'https://api-sister.yellowsistemas.com.br/',
@@ -84,6 +85,20 @@ export async function closeRoute(
   return data;
 }
 
-export async function streamingRoute() {}
+export async function streamingRoute(workedRouteId, coords) {
+  const token = await getTokenFromStorage();
+
+  const formData = new FormData();
+  formData.append('worked_route_id', workedRouteId);
+  formData.append('latitude', coords.latitude);
+  formData.append('longitude', coords.longitude);
+  formData.append('created_at_gps', getNowDateFormmated());
+
+  const headers = {
+    Authorization: `bearer ${token}`,
+  };
+
+  await api.post('/driver/streaming', formData, {headers});
+}
 
 export default api;

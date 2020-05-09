@@ -8,6 +8,7 @@ import bgscanner from '../../assets/bg.png';
 import {startRoute} from '~/services/api';
 import {getCurrentLocation} from '~/utils/geolocation';
 import {navigateInGoogleMaps} from '~/utils/map-directions';
+import {alertChoose} from '~/components/Alerts';
 
 export default function ReadCar({navigation}) {
   const {current: user} = useRef(navigation.getParam('user'));
@@ -46,12 +47,31 @@ export default function ReadCar({navigation}) {
             latitude: parseFloat(route.defined_route_id.lat_end),
             longitude: parseFloat(route.defined_route_id.lng_end),
           };
+          // const stops = route.stop_routes?.map((stop) => {
+          //   return {
+          //     latitude: parseFloat(stop.latitude),
+          //     longitude: parseFloat(stop.longitude),
+          //   };
+          // });
+          const stops = [
+            {
+              latitude: -20.973301,
+              longitude: -46.110928,
+            },
+          ];
 
-          navigateInGoogleMaps(initialPosition, finalPosition);
-          route.initialPosition = initialPosition;
-          route.initialTime = Date.now();
-          route.totalStudents = 0;
-          navigation.replace('ScannerStudent', {route});
+          alertChoose(
+            () => {
+              navigation.replace('RecordNewRoute', {route});
+            },
+            () => {
+              navigateInGoogleMaps(initialPosition, finalPosition, stops);
+              route.initialPosition = initialPosition;
+              route.initialTime = Date.now();
+              route.totalStudents = 0;
+              navigation.replace('ScannerStudent', {route});
+            },
+          );
         }
       } catch (error) {
         console.warn(error);

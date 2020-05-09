@@ -10,10 +10,10 @@ import {
 } from '~/utils/geolocation';
 import {storeRouteInStorage} from '~/storage/routes';
 import {ContainerCentered} from '~/components/GlobalStyles';
-import {ActivityIndicator} from 'react-native';
-import {scannerStudentQRCode} from '~/services/api';
+import {ActivityIndicator, BackHandler} from 'react-native';
+import {scannerStudentQRCode, streamingRoute} from '~/services/api';
 import {getNowDateFormmated} from '~/utils/date';
-import {alertConfirmRouteFinal} from '~/components/Alerts';
+import {alertConfirmRouteFinal, confirmCancelRoute} from '~/components/Alerts';
 
 export default function RecordNewRoute({navigation}) {
   const [_, setScanning] = useState(false);
@@ -29,10 +29,25 @@ export default function RecordNewRoute({navigation}) {
     totalStudents: 0,
   });
   const listenerPositionId = useRef();
+  const streamingTimer = useRef();
+
+  const handleBackButton = useCallback(() => {
+    confirmCancelRoute(() => {
+      clearInterval(streamingTimer.current);
+      navigation.goBack();
+    });
+    return true;
+  }, [navigation]);
 
   useEffect(() => {
     async function initRecordRoute() {
       console.log('INIT ROUTE');
+
+      streamingTimer.current = setInterval(async () => {
+        const location = await getCurrentLocation();
+        console.log('ROUTE: ', route);
+        streamingRoute(route.current.id_worked_route, location);
+      }, 60000);
 
       const location = await getCurrentLocation();
       setCoordinates([location]);
@@ -51,7 +66,17 @@ export default function RecordNewRoute({navigation}) {
         initRecordRoute();
       }
     });
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackButton,
+    );
+
     initRecordRoute();
+
+    return () => {
+      backHandler.remove();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -85,9 +110,9 @@ export default function RecordNewRoute({navigation}) {
 
   const handleEndRoute = useCallback(
     async (finalPosition) => {
-      console.log('FINAL: ', finalPosition);
       route.current.finalPosition = finalPosition;
       route.current.finalTime = Date.now();
+      clearInterval(streamingTimer.current);
       stopPositionListener(listenerPositionId.current);
       setCoordinates([]);
       await storeRouteInStorage(route.current);
