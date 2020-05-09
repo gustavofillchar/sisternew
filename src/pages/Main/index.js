@@ -20,6 +20,7 @@ import {ContainerCentered} from '~/components/GlobalStyles';
 import {ActivityIndicator} from 'react-native';
 import {getUserDataFromStorage, storeUserDataInStorage} from '~/storage/user';
 import {destroyToken} from '~/storage/auth';
+import {alertAvaibleDriver} from '~/components/Alerts';
 
 export default function Main({navigation}) {
   const [user, setUser] = useState(null);
@@ -66,9 +67,14 @@ export default function Main({navigation}) {
             <MDIcon name="qrcode-scan" size={29} color="#fff" />
             <ButtonScannerText>Iniciar Viagem</ButtonScannerText>
           </ButtonScanner>
-          <ButtonAvailable>
+          <ButtonAvailable
+            onPress={() => {
+              alertAvaibleDriver();
+            }}>
             <Icon name="event-available" size={29} color="#fff" />
-            <ButtonAvailableText>Informar disponibilidade</ButtonAvailableText>
+            <ButtonAvailableText>
+              Informar Indisponibilidade
+            </ButtonAvailableText>
           </ButtonAvailable>
         </BoxButtons>
       </ContainerPanel>

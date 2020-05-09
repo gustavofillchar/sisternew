@@ -58,7 +58,7 @@ export const BoxButtons = styled.View`
 `;
 
 export const ButtonScanner = styled.TouchableOpacity`
-  background-color: #b71c1c;
+  background-color: #7cb342;
   padding: 30px 20px;
   /* justify-content: center; */
   align-items: center;
@@ -76,9 +76,9 @@ export const ButtonScannerText = styled.Text`
 `;
 
 export const ButtonAvailable = styled.TouchableOpacity`
-  background-color: #7cb342;
   padding: 30px 20px;
   /* justify-content: center; */
+  background-color: #b71c1c;
   align-items: center;
   flex-direction: row;
   border-radius: 7px;

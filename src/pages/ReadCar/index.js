@@ -31,7 +31,7 @@ export default function ReadCar({navigation}) {
           coords.latitude,
           coords.longitude,
         );
-        console.log(route.defined_route_id.lat_end);
+
         if (route.new_route) {
           navigation.replace('RecordNewRoute', {route});
         } else {
@@ -53,19 +53,13 @@ export default function ReadCar({navigation}) {
           //     longitude: parseFloat(stop.longitude),
           //   };
           // });
-          const stops = [
-            {
-              latitude: -20.973301,
-              longitude: -46.110928,
-            },
-          ];
 
           alertChoose(
             () => {
               navigation.replace('RecordNewRoute', {route});
             },
             () => {
-              navigateInGoogleMaps(initialPosition, finalPosition, stops);
+              navigateInGoogleMaps(initialPosition, finalPosition);
               route.initialPosition = initialPosition;
               route.initialTime = Date.now();
               route.totalStudents = 0;

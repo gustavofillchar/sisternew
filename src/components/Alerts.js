@@ -34,3 +34,7 @@ export function confirmCancelRoute(confirmCallback) {
     ],
   );
 }
+
+export function alertAvaibleDriver() {
+  Alert.alert('Aviso', 'Indisponibilidade informada com sucesso.');
+}
