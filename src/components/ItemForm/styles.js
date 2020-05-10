@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import TextInputMask from 'react-native-text-input-mask';
 
 export const Container = styled.View`
   /* background-color: #999; */
@@ -22,11 +23,18 @@ export const FormInput = styled.View`
   border-radius: 5px;
   align-items: center;
   border-bottom-width: 1px;
-  border-color: #90a4ae;
+  border-color: ${(props) => (props.valid ? '#90a4ae' : '#c00')};
   padding: 5px;
 `;
 
 export const FieldText = styled.TextInput`
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  font-size: 16px;
+`;
+
+export const FieldTextMasked = styled(TextInputMask)`
   margin: 0;
   padding: 0;
   flex: 1;
