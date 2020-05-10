@@ -42,3 +42,7 @@ export const Info = styled.Text`
   font-weight: bold;
   text-align: center;
 `;
+
+export const MapContainer = styled.View`
+  z-index: 2;
+`;

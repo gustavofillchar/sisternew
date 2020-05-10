@@ -28,3 +28,7 @@ export function navigateInGoogleMaps(
 
   getDirections(data);
 }
+
+export function getGoogleMapsURL(initialPosition, finalPosition, stops = []) {
+  return `https://www.google.com/maps/dir/?api=1&origin=${initialPosition.latitude},${initialPosition.longitude}&destination=${finalPosition.latitude},${finalPosition.longitude}&travelmode=driving&dir_action=navigate`;
+}
