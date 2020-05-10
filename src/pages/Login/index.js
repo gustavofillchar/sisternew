@@ -14,6 +14,8 @@ import {
   TextRegister,
   LogoBox,
   Logo,
+  RecoveryPassword,
+  TextPass,
 } from './styles';
 
 import logoapp from '../../assets/logoapp.png';
@@ -80,6 +82,7 @@ export default function Login({navigation}) {
           <MDIcon name="lock" size={18} color="#999" />
           <InputHere
             placeholder="Senha"
+            keyboardType="number-pad"
             secureTextEntry={true}
             value={password}
             onChangeText={(entry) => setPassword(entry)}
@@ -93,6 +96,10 @@ export default function Login({navigation}) {
             <TextButton>Entrar</TextButton>
           )}
         </LoginButton>
+        <RecoveryPassword
+          onPress={() => Alert.alert('Atenção', 'Opção não habilitada.')}>
+          <TextPass>Esqueci minha senha</TextPass>
+        </RecoveryPassword>
         <RegisterButton onPress={() => navigation.navigate('Register')}>
           <TextRegister>Cadastro de Motorista</TextRegister>
         </RegisterButton>

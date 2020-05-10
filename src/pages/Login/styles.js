@@ -77,3 +77,14 @@ export const Logo = styled.Image.attrs({
   height: 100%;
   width: 100%;
 `;
+
+export const RecoveryPassword = styled.TouchableOpacity`
+  justify-content: center;
+  align-items: center;
+  padding: 10px 10px 20px 10px;
+`;
+
+export const TextPass = styled.Text`
+  color: #f5f5f5;
+  font-size: 16px;
+`;

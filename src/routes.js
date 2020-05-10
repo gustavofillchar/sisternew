@@ -3,6 +3,7 @@ import {createStackNavigator} from 'react-navigation-stack';
 
 import Main from '~/pages/Main';
 import Register from '~/pages/Register';
+import GetCep from '~/pages/Register/GetCep';
 import VehicleRegister from '~/pages/VehicleRegister';
 import TestRoutes from '~/pages/TestRoutes';
 import Login from '~/pages/Login';
@@ -54,6 +55,16 @@ const Routes = createAppContainer(
           headerTintColor: '#fff',
         },
       },
+      GetCep: {
+        screen: GetCep,
+        navigationOptions: {
+          headerStyle: {
+            backgroundColor: '#C10C19',
+          },
+          headerTitle: 'Escolher a cidade',
+          headerTintColor: '#fff',
+        },
+      },
       VehicleRegister: {
         screen: VehicleRegister,
         navigationOptions: {
@@ -98,6 +109,7 @@ const Routes = createAppContainer(
 
     {
       initialRouteName: 'CheckAuth',
+      // initialRouteName: 'GetCep',
       defaultNavigationOptions: {
         headerBackTitle: 'Voltar',
         headerTruncatedBackTitle: 'Voltar',

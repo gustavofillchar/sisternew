@@ -6,6 +6,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import api from '~/services/api';
 
+import axios from 'axios';
+
 import {Picker} from '@react-native-community/picker';
 
 import {
@@ -18,6 +20,7 @@ import {
   PreviewCNH,
   ContainerProfile,
   InformText,
+  CepInput,
 } from './styles';
 
 import PhotoPreview from '../../components/PhotoPreview';
@@ -53,22 +56,24 @@ export default function Register({navigation}) {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [vehicleModelId, setVehicleModelId] = useState(1);
+  const [resultCep, setResultCep] = useState({});
+  const [myCEP, setMyCEP] = useState('');
 
   useEffect(() => {
     api
       .get('general/prefectures')
-      .then(async response => {
+      .then(async (response) => {
         setPrefectureInfo(response.data);
         // setHasPrefecture(true);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   }, []);
 
   useEffect(() => {
     if (hasPrefecture) {
-      prefectureInfo?.data.map(data => {
+      prefectureInfo?.data.map((data) => {
         if (data.id === idPrefectureSelected) {
           setCity(data.city);
           setUf(data.uf);
@@ -76,6 +81,29 @@ export default function Register({navigation}) {
       });
     }
   }, [hasPrefecture, idPrefectureSelected, prefectureInfo]);
+
+  function getCity(cep) {
+    axios
+      .get('https://viacep.com.br/ws/' + cep + '/json/')
+      .then(async (response) => {
+        setResultCep(response.data);
+        setHasPrefecture(true);
+
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  useEffect(() => {
+    if (setResultCep) {
+      setAddress(resultCep.logradouro);
+      setUf(resultCep.uf);
+      setCity(resultCep.localidade);
+      setZipCode(resultCep.cep);
+    }
+  }, [resultCep]);
 
   function buildFormData() {
     console.log(driverLicenseImage);
@@ -153,35 +181,18 @@ export default function Register({navigation}) {
       {!hasPrefecture && (
         <Form>
           <InformText>
-            Para continuar é importante que você selecione a cidade onde irá
-            trabalhar:
+            Insira o seu CEP para identificarmos a sua cidade.
           </InformText>
-          <Picker
-            mode="dialog"
-            selectedValue={idPrefectureSelected}
-            onValueChange={(itemValue, itemIndex) => {
-              console.log(itemValue);
-              setIdPrefectureSelected(itemValue);
-            }}>
-            <Picker.Item label="Escolha uma cidade..." value={0} />
-            {prefectureInfo?.data.map(data => {
-              return (
-                <Picker.Item
-                  key={data.id}
-                  label={data.city + ', ' + data.uf}
-                  value={data.id}
-                />
-              );
-              // console.log('rei');
-            })}
-          </Picker>
+
+          <CepInput
+            value={myCEP}
+            onChangeText={(e) => setMyCEP(e)}
+            keyboardType="number-pad"
+          />
+
           <SubmitButton
             onPress={() => {
-              if (idPrefectureSelected !== 0) {
-                setHasPrefecture(true);
-              } else {
-                alert('Selecione a cidade.');
-              }
+              getCity(myCEP);
             }}
             activeOpacity={0.8}>
             <SubmitText>Continuar</SubmitText>
@@ -233,7 +244,7 @@ export default function Register({navigation}) {
               onChangeText={setNumber}
             />
 
-            <ItemForm label="Cidade" value={city} editable={false} />
+            <ItemForm label="Cidade" value={city} />
 
             <ItemForm label="UF" placeholder="140" value={uf} />
 
@@ -248,39 +259,6 @@ export default function Register({navigation}) {
               placeholder="Informe sua carteira"
               value={driverLicense}
               onChangeText={setDriverLicense}
-            />
-            <ItemForm
-              label="Placa do Veículo"
-              placeholder="XXX-0000"
-              value={board}
-              onChangeText={setBoard}
-            />
-
-            <ItemForm
-              label="Renavam"
-              placeholder="Ex.: 123456789"
-              value={renavam}
-              onChangeText={setRenavam}
-            />
-            <ItemForm
-              label="Ano Fabricação"
-              placeholder="Ex.: 2014"
-              value={yearManufacture}
-              onChangeText={setYearManufacture}
-            />
-
-            <ItemForm
-              label="Ano Modelo"
-              placeholder="Ex.: 2015"
-              value={yearModel}
-              onChangeText={setYearModel}
-            />
-
-            <ItemForm
-              label="Quantidade Passageiros"
-              placeholder="Ex: 15"
-              value={passengers}
-              onChangeText={setPassengers}
             />
 
             <ItemForm

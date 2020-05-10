@@ -67,11 +67,3 @@ export const PreviewCNH = styled.Image.attrs({
   margin: 0 0 15px 0;
   border-radius: 5px;
 `;
-
-export const CepInput = styled.TextInput.attrs({})`
-  border: solid 1px #cdcdcd;
-  margin: 10px 0;
-  padding: 10px;
-  font-size: 16px;
-  text-align: center;
-`;
