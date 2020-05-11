@@ -42,6 +42,7 @@ export default function Login({navigation}) {
       .post('general/driver/login', {
         email: userName,
         password: password,
+        player_id: 'd762b9a6-7b9c-429b-a6a0-6bad29b0d57b',
       })
       .then(async (response) => {
         await storeTokenInStorage(response.data.access_token);

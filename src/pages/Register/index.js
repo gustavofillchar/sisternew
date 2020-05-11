@@ -258,6 +258,7 @@ export default function Register({navigation}) {
     try {
       await api.post('/general/driver/register', formData);
       Alert.alert('Aviso', 'Motorista cadastrado com sucesso');
+      navigation.navigate('VehicleRegister');
     } catch (error) {
       console.warn(error);
       Alert.alert(
@@ -321,7 +322,7 @@ export default function Register({navigation}) {
               value={name}
               onChangeText={setName}
               valid={validation.name}
-              invalidMessage="Preecha o campo corretamente"
+              invalidMessage="Digite seu nome corretamente"
             />
 
             <ItemForm
@@ -330,7 +331,7 @@ export default function Register({navigation}) {
               value={email}
               onChangeText={setEmail}
               valid={validation.email}
-              invalidMessage="Preecha o campo corretamente"
+              invalidMessage="Digite seu e-mail corretamente"
             />
 
             <ItemForm
@@ -339,8 +340,8 @@ export default function Register({navigation}) {
               value={phone}
               onChangeText={setPhone}
               valid={validation.phone}
-              invalidMessage="Preecha o campo corretamente"
-              mask="([00])[00000]-[0000]"
+              invalidMessage="Preencha com o seu telefone corretamente"
+              mask="([00]) [00000]-[0000]"
               keyboardType="numeric"
             />
 
@@ -350,7 +351,7 @@ export default function Register({navigation}) {
               value={document}
               onChangeText={setDocument}
               valid={validation.document}
-              invalidMessage="Preecha o campo corretamente"
+              invalidMessage="Preencha com o seu CPF"
               keyboardType="numeric"
               mask="[000].[000].[000]-[00]"
             />
@@ -361,7 +362,7 @@ export default function Register({navigation}) {
               value={address}
               onChangeText={setAddress}
               valid={validation.address}
-              invalidMessage="Preecha o campo corretamente"
+              invalidMessage="Preencha com o seu endereço"
             />
             <ItemForm
               label="Número"
@@ -369,14 +370,15 @@ export default function Register({navigation}) {
               value={number}
               onChangeText={setNumber}
               valid={validation.number}
-              invalidMessage="Preecha o campo corretamente"
+              keyboardType="numeric"
+              invalidMessage="Preencha com o número do seu endereço"
             />
 
             <ItemForm
               label="Cidade"
               value={city}
               valid={validation.city}
-              invalidMessage="Preecha o campo corretamente"
+              invalidMessage="Insira sua cidade corretamente"
             />
 
             <ItemForm
@@ -384,7 +386,7 @@ export default function Register({navigation}) {
               placeholder="140"
               value={uf}
               valid={validation.uf}
-              invalidMessage="Preecha o campo corretamente"
+              invalidMessage="Insira seu estado corretamente"
             />
 
             <ItemForm
@@ -393,7 +395,7 @@ export default function Register({navigation}) {
               value={zipCode}
               onChangeText={setZipCode}
               valid={validation.zipCode}
-              invalidMessage="Preecha o campo corretamente"
+              invalidMessage="Preencha o campo corretamente"
             />
             <ItemForm
               label="Carteira de Motorista"
@@ -401,7 +403,7 @@ export default function Register({navigation}) {
               value={driverLicense}
               onChangeText={setDriverLicense}
               valid={validation.driverLicense}
-              invalidMessage="Preecha o campo corretamente"
+              invalidMessage="Preencha o campo corretamente"
             />
 
             <ItemForm

@@ -56,7 +56,7 @@ export default function Main({navigation}) {
     <Container>
       <ContainerPanel source={wp}>
         <Header>
-          <Title>Olá, {user.driver.name}</Title>
+          <Title>Olá, {user?.driver?.name}</Title>
           <Logout onPress={logout}>
             <MDIcon name="logout" size={25} color="#999" />
           </Logout>
