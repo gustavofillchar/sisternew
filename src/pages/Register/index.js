@@ -1,14 +1,8 @@
-import React, {useState, useEffect, useReducer, useRef} from 'react';
-
+import React, {useState, useEffect} from 'react';
 import {StatusBar, ActivityIndicator, Alert} from 'react-native';
-
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 import api from '~/services/api';
-
 import axios from 'axios';
-
-import {Picker} from '@react-native-community/picker';
 
 import {
   Container,

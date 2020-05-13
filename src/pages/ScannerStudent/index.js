@@ -1,4 +1,4 @@
-import React, {useRef, useCallback, useState} from 'react';
+import React, {useRef, useCallback, useState, useEffect} from 'react';
 import {
   Container,
   ActionContainer,
@@ -7,27 +7,51 @@ import {
   BackgroundQRCode,
   ContainerCameraInactive,
   Info,
+  MapContainer,
 } from './styles';
 import QRCodeScanner from '~/components/QRCodeScanner';
 import {getNowDateFormmated} from '~/utils/date';
-import {getCurrentLocation, stopPositionListener} from '~/utils/geolocation';
+import {
+  getCurrentLocation,
+  stopPositionListener,
+  listenerUserPosition,
+} from '~/utils/geolocation';
 import {scannerStudentQRCode} from '~/services/api';
 import {storeRouteInStorage} from '~/storage/routes';
 import Action from '~/components/Action';
-import {navigateInGoogleMaps} from '~/utils/map-directions';
-import {ContainerCentered} from '~/components/GlobalStyles';
-import {Button} from 'react-native';
+import {Image, StyleSheet} from 'react-native';
 import {alertConfirmRouteFinal} from '~/components/Alerts';
+
+import MapView, {Marker, Polyline} from 'react-native-maps';
 
 export default function ScannerStudent({navigation}) {
   const scanning = useRef(false);
 
   const [_, setScanning] = useState(false);
-  const [cameraActived, setCameraActived] = useState(false);
+  // const [cameraActived, setCameraActived] = useState(false);
   const [scanError, setScanError] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [coordinates, setCoordinates] = useState([]);
 
   const route = useRef(navigation.getParam('route'));
   const listenerPositionId = useRef();
+
+  async function handleListenerPosition() {
+    setCurrentLocation(await getCurrentLocation());
+    listenerPositionId.current = await listenerUserPosition((position) => {
+      setCoordinates([...coordinates, position]);
+      setCurrentLocation(position);
+    });
+  }
+
+  useEffect(() => {
+    navigation.addListener('didFocus', () => {
+      handleListenerPosition();
+    });
+    handleListenerPosition();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleReadQRCode = useCallback(
     async (studentCode) => {
@@ -63,7 +87,6 @@ export default function ScannerStudent({navigation}) {
 
   const handleEndRoute = useCallback(async () => {
     const finalPosition = await getCurrentLocation();
-    console.log('FINAL: ', finalPosition);
     route.current.finalPosition = finalPosition;
     route.current.finalTime = Date.now();
     stopPositionListener(listenerPositionId.current);
@@ -71,42 +94,93 @@ export default function ScannerStudent({navigation}) {
     navigation.navigate('RouteResult', {route: route.current});
   }, [navigation]);
 
-  if (!cameraActived) {
-    return (
-      <BackgroundQRCode>
-        <ContainerCameraInactive>
-          <Info>
-            Sua câmera não foi ativada de forma automática. Pressione o botão
-            abaixo para ativar a câmera
-          </Info>
-          <ActiveCameraButton
-            onPress={() => {
-              setCameraActived(true);
-            }}>
-            <ActiveCameraText>Fazer Check-In Aluno</ActiveCameraText>
-          </ActiveCameraButton>
-        </ContainerCameraInactive>
-      </BackgroundQRCode>
-    );
-  }
+  // if (!cameraActived) {
+  //   return (
+  //     <BackgroundQRCode>
+  //       <ContainerCameraInactive>
+  //         <Info>
+  //           Sua câmera não foi ativada de forma automática. Pressione o botão
+  //           abaixo para ativar a câmera
+  //         </Info>
+  //         <ActiveCameraButton
+  //           onPress={() => {
+  //             setCameraActived(true);
+  //           }}>
+  //           <ActiveCameraText>Fazer Check-In Aluno</ActiveCameraText>
+  //         </ActiveCameraButton>
+  //       </ContainerCameraInactive>
+  //     </BackgroundQRCode>
+  //   );
+  // }
 
   return (
     <Container>
+      <MapContainer>
+        <MapView
+          style={styles.map}
+          region={{
+            latitude: route.current.finalPosition.latitude,
+            longitude: route.current.finalPosition.longitude,
+            latitudeDelta: 0.0102,
+            longitudeDelta: 0.0102,
+          }}>
+          <Polyline
+            coordinates={coordinates}
+            strokeWidth={3}
+            strokeColor="#C10C19"
+          />
+          {currentLocation && (
+            <Marker title="Sua posição atual" coordinate={currentLocation}>
+              <Image
+                source={require('~/assets/car.png')}
+                style={styles.carImage}
+              />
+            </Marker>
+          )}
+          <Marker coordinate={route.current.initialPosition} pinColor="#0f0" />
+          <Marker coordinate={route.current.finalPosition} />
+          {route.current.stops.map((stop, index) => {
+            return (
+              <Marker key={index.toString()} coordinate={stop}>
+                <Image
+                  source={require('~/assets/stop-sign.png')}
+                  style={styles.stopSign}
+                />
+              </Marker>
+            );
+          })}
+        </MapView>
+        <ActionContainer>
+          <Action
+            iconName="flag"
+            description="Finalizar Rota"
+            color="#ffca28"
+            onPress={() => {
+              alertConfirmRouteFinal(handleEndRoute);
+            }}
+          />
+        </ActionContainer>
+      </MapContainer>
       <QRCodeScanner
         scanning={scanning.current}
         error={scanError}
         onReadQRCode={handleReadQRCode}
       />
-      <ActionContainer>
-        <Action
-          iconName="flag"
-          description="Finalizar Rota"
-          color="#ffca28"
-          onPress={() => {
-            alertConfirmRouteFinal(handleEndRoute);
-          }}
-        />
-      </ActionContainer>
     </Container>
   );
 }
+
+const styles = StyleSheet.create({
+  map: {
+    width: '100%',
+    height: 300,
+  },
+  stopSign: {
+    width: 10,
+    height: 10,
+  },
+  carImage: {
+    width: 20,
+    height: 20,
+  },
+});

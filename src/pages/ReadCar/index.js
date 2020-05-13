@@ -49,20 +49,22 @@ export default function ReadCar({navigation}) {
             latitude: parseFloat(route.defined_route_id.lat_end),
             longitude: parseFloat(route.defined_route_id.lng_end),
           };
-          // const stops = route.stop_routes?.map((stop) => {
-          //   return {
-          //     latitude: parseFloat(stop.latitude),
-          //     longitude: parseFloat(stop.longitude),
-          //   };
-          // });
+          const stops = route.stop_routes?.map((stop) => {
+            return {
+              latitude: parseFloat(stop.latitude),
+              longitude: parseFloat(stop.longitude),
+            };
+          });
 
           alertChoose(
             () => {
               navigation.replace('RecordNewRoute', {route});
             },
             () => {
-              navigateInGoogleMaps(initialPosition, finalPosition);
+              // navigateInGoogleMaps(initialPosition, finalPosition);
               route.initialPosition = initialPosition;
+              route.finalPosition = finalPosition;
+              route.stops = stops;
               route.initialTime = Date.now();
               route.totalStudents = 0;
               navigation.replace('ScannerStudent', {route});
