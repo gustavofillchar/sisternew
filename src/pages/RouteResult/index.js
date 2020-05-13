@@ -34,9 +34,10 @@ export default function RouteResult({navigation}) {
 
   const handleQRCodeRead = useCallback(async () => {
     setLoading(true);
+    console.log('rota', route);
     await closeRoute(
       route.id_worked_route,
-      route.defined_route_id.defined_route_id,
+      route.defined_route_id.id,
       route.finalPosition.latitude,
       route.finalPosition.longitude,
       kms,

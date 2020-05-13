@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect, useCallback} from 'react';
 import MDIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -12,6 +13,7 @@ import {
   ButtonScannerText,
   ButtonAvailable,
   ButtonAvailableText,
+  ButtonRegisterVeichle,
 } from './styles';
 
 import wp from '../../assets/van.jpg';
@@ -81,6 +83,12 @@ export default function Main({navigation}) {
               Informar Indisponibilidade
             </ButtonAvailableText>
           </ButtonAvailable>
+
+          <ButtonRegisterVeichle
+            onPress={() => navigation.navigate('VehicleRegister', {user})}>
+            <Icon name="list" size={29} color="#fff" />
+            <ButtonAvailableText>Cadastrar Veículo</ButtonAvailableText>
+          </ButtonRegisterVeichle>
         </BoxButtons>
       </ContainerPanel>
     </Container>

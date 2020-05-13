@@ -93,3 +93,16 @@ export const ButtonAvailableText = styled.Text`
   font-weight: 700;
   margin-left: 20px;
 `;
+
+export const ButtonRegisterVeichle = styled.TouchableOpacity`
+  padding: 20px 20px;
+  /* justify-content: center; */
+  background-color: rgba(0, 0, 0, 0.2);
+  border-color: #fff;
+  border-width: 1px;
+  align-items: center;
+  flex-direction: row;
+  border-radius: 7px;
+  width: 100%;
+  margin-top: 15px;
+`;

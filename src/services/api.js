@@ -74,6 +74,7 @@ export async function closeRoute(
   endAt,
 ) {
   const token = await getTokenFromStorage();
+  console.log(workedRouteId, definedRouteId, latEnd, lonEnd, kms, endAt);
 
   const formData = new FormData();
   formData.append('worked_route_id', workedRouteId);

@@ -27,13 +27,13 @@ export default function ReadCar({navigation}) {
       try {
         const coords = await getCurrentLocation();
         const route = await startRoute(
-          user.driver.driver_id,
+          user.driver.id,
           code,
           user.driver.prefecture_id,
           coords.latitude,
           coords.longitude,
         );
-        console.log(route);
+        console.log('log especial', route.new_route);
         if (route.new_route) {
           navigation.replace('RecordNewRoute', {route});
         } else {
