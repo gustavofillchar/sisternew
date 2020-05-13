@@ -31,10 +31,12 @@ export default function Main({navigation}) {
       if (previousUserData) {
         setUser(previousUserData);
       } else {
-        const data = await fetchUserData();
-        await storeUserDataInStorage(data);
-        setUser(data);
       }
+      const data = await fetchUserData();
+      // console.log(data);
+      await storeUserDataInStorage(data);
+      setUser(data);
+      console.log('log user ', user);
     }
     prepareUserData();
   }, []);
@@ -56,17 +58,20 @@ export default function Main({navigation}) {
     <Container>
       <ContainerPanel source={wp}>
         <Header>
-          <Title>Olá, {user?.driver?.name}</Title>
+          <Title numberOfLines={1}>Olá, {user.driver.name}</Title>
           <Logout onPress={logout}>
             <MDIcon name="logout" size={25} color="#999" />
           </Logout>
         </Header>
 
         <BoxButtons>
-          <ButtonScanner onPress={() => navigation.navigate('ReadCar', {user})}>
-            <MDIcon name="qrcode-scan" size={29} color="#fff" />
-            <ButtonScannerText>Iniciar Viagem</ButtonScannerText>
-          </ButtonScanner>
+          {user !== null && (
+            <ButtonScanner
+              onPress={() => navigation.navigate('ReadCar', {user})}>
+              <MDIcon name="qrcode-scan" size={29} color="#fff" />
+              <ButtonScannerText>Iniciar Viagem</ButtonScannerText>
+            </ButtonScanner>
+          )}
           <ButtonAvailable
             onPress={() => {
               alertAvaibleDriver();

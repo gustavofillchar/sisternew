@@ -18,20 +18,22 @@ export default function ReadCar({navigation}) {
   const scanningHolder = useRef(false);
 
   const initRoute = useCallback(
-    async (vehicleId) => {
+    async (code) => {
       // const route = await getRouteFromStorage();
       setScanError(false);
       scanningHolder.current = true;
       setScanning(true);
+      console.log('after reading: ', user);
       try {
         const coords = await getCurrentLocation();
         const route = await startRoute(
-          vehicleId,
+          user.driver.driver_id,
+          code,
           user.driver.prefecture_id,
           coords.latitude,
           coords.longitude,
         );
-
+        console.log(route);
         if (route.new_route) {
           navigation.replace('RecordNewRoute', {route});
         } else {

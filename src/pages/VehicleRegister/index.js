@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {StatusBar} from 'react-native';
 
@@ -30,6 +30,16 @@ const FormItemInput = ({labelname, sample, secure}) => {
 };
 
 export default function VehicleRegister({navigation}) {
+  const [driverId, setDriverId] = useState('');
+  const [board, setBoard] = useState('');
+  const [renavam, setRenavam] = useState('');
+  const [yearManufacture, setYearManufacture] = useState('');
+  const [imageLicense, setImageLicense] = useState('');
+  const [passengers, setPassengers] = useState('');
+  const [yearModel, setYearModel] = useState('');
+  const [vehicleModelId, setVehicleModelId] = useState('');
+  const [brandModelId, setBrandModelId] = useState('');
+
   return (
     <Container>
       <StatusBar backgroundColor="#C10C19" />
