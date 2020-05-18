@@ -31,6 +31,7 @@ export default function ReadCar({navigation}) {
           coords.latitude,
           coords.longitude,
         );
+        console.log('ROUTE: ', JSON.stringify(route, null, 2));
 
         if (route.new_route) {
           navigation.replace('RecordNewRoute', {route});
