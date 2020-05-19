@@ -251,8 +251,11 @@ export default function Register({navigation}) {
     const formData = buildFormData();
     try {
       await api.post('/general/driver/register', formData);
-      Alert.alert('Aviso', 'Motorista cadastrado com sucesso');
-      navigation.navigate('VehicleRegister');
+      Alert.alert(
+        'Aviso',
+        'Motorista cadastrado com sucesso. Faça o login para poder cadastrar o veículo.',
+      );
+      navigation.navigate('Main');
     } catch (error) {
       console.warn(error);
       Alert.alert(

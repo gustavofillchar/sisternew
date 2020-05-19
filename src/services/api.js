@@ -42,18 +42,15 @@ export async function scannerStudentQRCode(
 }
 
 export async function startRoute(
-  vehicleId,
   code,
-  prefectureId,
+
   latStart,
   lngStart,
 ) {
   const token = await getTokenFromStorage();
 
   const formData = new FormData();
-  formData.append('vehicle_id', vehicleId);
   formData.append('code', code);
-  formData.append('prefecture_id', prefectureId);
   formData.append('lat_start', latStart);
   formData.append('lng_start', lngStart);
 

@@ -2,6 +2,7 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import MDIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import {
   Container,
   ContainerPanel,
@@ -19,13 +20,46 @@ import {
 import wp from '../../assets/van.jpg';
 import {fetchUserData} from '~/services/api';
 import {ContainerCentered} from '~/components/GlobalStyles';
-import {ActivityIndicator} from 'react-native';
+import {ActivityIndicator, BackHandler, ToastAndroid} from 'react-native';
 import {getUserDataFromStorage, storeUserDataInStorage} from '~/storage/user';
 import {destroyToken} from '~/storage/auth';
 import {alertAvaibleDriver} from '~/components/Alerts';
 
 export default function Main({navigation}) {
   const [user, setUser] = useState(null);
+
+  const [numberClick, setNumberClick] = useState(0);
+
+  const backHandler = useCallback(() => {
+    if (numberClick === 2) {
+      BackHandler.exitApp();
+    }
+    setNumberClick(2);
+    ToastAndroid.show(
+      'Pressione novamente para sair do aplicativo',
+      ToastAndroid.SHORT,
+    );
+    setTimeout(() => {
+      setNumberClick(1);
+    }, 1000);
+    return true;
+  }, [numberClick]);
+
+  useEffect(() => {
+    BackHandler.removeEventListener('hardwareBackPress', backHandler);
+    BackHandler.addEventListener('hardwareBackPress', backHandler);
+  }, [backHandler]);
+
+  useEffect(() => {
+    navigation.addListener('blur', () => {
+      BackHandler.removeEventListener('hardwareBackPress', backHandler);
+    });
+
+    navigation.addListener('focus', () => {
+      BackHandler.addEventListener('hardwareBackPress', backHandler);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation]);
 
   useEffect(() => {
     async function prepareUserData() {

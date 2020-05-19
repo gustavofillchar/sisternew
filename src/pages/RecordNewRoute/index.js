@@ -15,7 +15,7 @@ import {scannerStudentQRCode, streamingRoute} from '~/services/api';
 import {getNowDateFormmated} from '~/utils/date';
 import {alertConfirmRouteFinal, confirmCancelRoute} from '~/components/Alerts';
 
-export default function RecordNewRoute({navigation}) {
+export default function RecordNewRoute({navigation, route: navigationRoute}) {
   const [_, setScanning] = useState(false);
   const [scanError, setScanError] = useState(false);
   const [coordinates, setCoordinates] = useState([]);
@@ -23,8 +23,14 @@ export default function RecordNewRoute({navigation}) {
 
   const scanningHolder = useRef(false);
 
+  useEffect(() => {
+    navigation.addListener('focus', () => {
+      scanningHolder.current = false;
+    });
+  }, [navigation]);
+
   const route = useRef({
-    ...navigation.getParam('route'),
+    ...navigationRoute.params.route,
     stops: [],
     totalStudents: 0,
   });
@@ -34,10 +40,10 @@ export default function RecordNewRoute({navigation}) {
   const handleBackButton = useCallback(() => {
     confirmCancelRoute(() => {
       clearInterval(streamingTimer.current);
-      navigation.goBack();
+      // handleEndRoute;
     });
     return true;
-  }, [navigation]);
+  }, []);
 
   useEffect(() => {
     async function initRecordRoute() {
@@ -61,7 +67,7 @@ export default function RecordNewRoute({navigation}) {
       setCurrentLocation(location);
     }
 
-    navigation.addListener('didFocus', () => {
+    navigation.addListener('focus', () => {
       if (coordinates.length > 0) {
         initRecordRoute();
       }
@@ -83,7 +89,7 @@ export default function RecordNewRoute({navigation}) {
   const handleReadQRCode = useCallback(
     async (studentCode) => {
       setScanning(true);
-      scanningHolder.current = true;
+
       setScanError(false);
       try {
         const coords = await getCurrentLocation();
@@ -99,9 +105,9 @@ export default function RecordNewRoute({navigation}) {
         navigation.navigate('StudentID', {student: studentData.pupil});
       } catch (error) {
         console.warn(error);
+        scanningHolder.current = false;
         setScanError(true);
       } finally {
-        scanningHolder.current = false;
         setScanning(false);
       }
     },
@@ -134,7 +140,13 @@ export default function RecordNewRoute({navigation}) {
             // onReadQRCode={() => setScannerVisible(true)}
           />
           <QRCodeScanner
-            onReadQRCode={handleReadQRCode}
+            onReadQRCode={async (e) => {
+              if (scanningHolder.current === false) {
+                scanningHolder.current = true;
+                handleReadQRCode(e);
+                // alert('apenas 1');
+              }
+            }}
             scanning={scanningHolder.current}
             error={scanError}
           />

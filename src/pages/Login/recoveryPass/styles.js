@@ -84,22 +84,7 @@ export const RecoveryPassword = styled.TouchableOpacity`
   padding: 10px 10px 20px 10px;
 `;
 
-export const ShowPassEye = styled.TouchableOpacity``;
-
 export const TextPass = styled.Text`
   color: #f5f5f5;
   font-size: 16px;
-`;
-
-export const RememberText = styled.Text`
-  color: #ddd;
-  font-size: 14px;
-  margin-right: 10px;
-`;
-
-export const BoxRemember = styled.View`
-  padding: 3px 0 12px 0;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
 `;

@@ -21,7 +21,7 @@ import PhotoPreview from '../../components/PhotoPreview';
 import openCamera from '~/utils/open-camera';
 import ItemForm from '~/components/ItemForm';
 
-export default function VehicleRegister({navigation}) {
+export default function VehicleRegister({route, navigation}) {
   const [setting, setSetting] = useState(false);
   const [image, setImage] = useState('');
 
@@ -29,13 +29,13 @@ export default function VehicleRegister({navigation}) {
   const [driverId, setDriverId] = useState('');
 
   useEffect(() => {
-    let user = navigation.getParam('user');
+    const {user} = route.params;
 
     if (user) {
       setDriverId(user.driver.id);
     }
     console.log(driverId);
-  }, [navigation, driverId]);
+  }, [route, driverId]);
 
   const [board, setBoard] = useState('');
   const [renavam, setRenavam] = useState('');

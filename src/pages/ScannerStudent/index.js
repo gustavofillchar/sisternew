@@ -24,19 +24,19 @@ import {alertConfirmRouteFinal} from '~/components/Alerts';
 
 import MapView, {Marker, Polyline} from 'react-native-maps';
 
-export default function ScannerStudent({navigation}) {
+export default function ScannerStudent({navigation, route: navigationRoute}) {
   const scanning = useRef(false);
 
   const [_, setScanning] = useState(false);
-  // const [cameraActived, setCameraActived] = useState(false);
   const [scanError, setScanError] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [coordinates, setCoordinates] = useState([]);
 
-  const route = useRef(navigation.getParam('route'));
+  const route = useRef(navigationRoute.params?.route);
   const listenerPositionId = useRef();
 
   async function handleListenerPosition() {
+    scanning.current = false;
     setCurrentLocation(await getCurrentLocation());
     listenerPositionId.current = await listenerUserPosition((position) => {
       setCoordinates([...coordinates, position]);
@@ -45,13 +45,13 @@ export default function ScannerStudent({navigation}) {
   }
 
   useEffect(() => {
-    navigation.addListener('didFocus', () => {
+    navigation.addListener('focus', () => {
       handleListenerPosition();
     });
     handleListenerPosition();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigation]);
 
   const handleReadQRCode = useCallback(
     async (studentCode) => {
@@ -59,7 +59,6 @@ export default function ScannerStudent({navigation}) {
         route.current.stops = [];
       }
 
-      scanning.current = true;
       setScanError(false);
       setScanning(true);
       try {
@@ -78,7 +77,6 @@ export default function ScannerStudent({navigation}) {
         console.warn(error);
         setScanError(true);
       } finally {
-        scanning.current = false;
         setScanning(false);
       }
     },
@@ -164,7 +162,12 @@ export default function ScannerStudent({navigation}) {
       <QRCodeScanner
         scanning={scanning.current}
         error={scanError}
-        onReadQRCode={handleReadQRCode}
+        onReadQRCode={async (e) => {
+          if (scanning.current === false) {
+            scanning.current = true;
+            handleReadQRCode(e);
+          }
+        }}
       />
     </Container>
   );

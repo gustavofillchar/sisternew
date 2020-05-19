@@ -9,9 +9,10 @@ import {startRoute} from '~/services/api';
 import {getCurrentLocation} from '~/utils/geolocation';
 import {navigateInGoogleMaps} from '~/utils/map-directions';
 import {alertChoose} from '~/components/Alerts';
+import {func} from 'prop-types';
 
-export default function ReadCar({navigation}) {
-  const {current: user} = useRef(navigation.getParam('user'));
+export default function ReadCar({navigation, route: navigationRoute}) {
+  const {current: user} = useRef(navigationRoute.params);
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState(false);
 
@@ -19,23 +20,15 @@ export default function ReadCar({navigation}) {
 
   const initRoute = useCallback(
     async (code) => {
-      // const route = await getRouteFromStorage();
-      setScanError(false);
-      scanningHolder.current = true;
       setScanning(true);
-      console.log('after reading: ', user);
+      setScanError(false);
       try {
         const coords = await getCurrentLocation();
-        const route = await startRoute(
-          user.driver.id,
-          code,
-          user.driver.prefecture_id,
-          coords.latitude,
-          coords.longitude,
-        );
-        console.log('log especial', route.new_route);
+        const route = await startRoute(code, coords.latitude, coords.longitude);
+
         if (route.new_route) {
           navigation.replace('RecordNewRoute', {route});
+          scanningHolder.current = false;
         } else {
           const initialPosition = {
             latitude: isNaN(route.defined_route_id.lat_start)
@@ -55,10 +48,12 @@ export default function ReadCar({navigation}) {
               longitude: parseFloat(stop.longitude),
             };
           });
+          setScanning(false);
 
           alertChoose(
             () => {
               navigation.replace('RecordNewRoute', {route});
+              scanningHolder.current = false;
             },
             () => {
               // navigateInGoogleMaps(initialPosition, finalPosition);
@@ -68,26 +63,24 @@ export default function ReadCar({navigation}) {
               route.initialTime = Date.now();
               route.totalStudents = 0;
               navigation.replace('ScannerStudent', {route});
+              scanningHolder.current = false;
             },
           );
         }
       } catch (error) {
         console.warn(error);
+        scanningHolder.current = false;
         setScanError(true);
       } finally {
-        scanningHolder.current = false;
         setScanning(false);
       }
     },
-    [navigation, user],
+
+    [navigation],
   );
 
   return (
     <Container>
-      {/* <StatusBar
-        barStyle={cameraOn ? 'light-content' : 'dark-content'}
-        backgroundColor={cameraOn ? '#000' : '#fff'}
-      /> */}
       <QRCameraReaderBox>
         <Image
           resizeMode="cover"
@@ -96,12 +89,14 @@ export default function ReadCar({navigation}) {
         />
         <RNCamera
           style={styles.camera}
-          onBarCodeRead={(e) => {
-            if (!scanningHolder.current) {
-              initRoute(e.data);
+          onBarCodeRead={async (e) => {
+            if (scanningHolder.current === false) {
+              scanningHolder.current = true;
+              await initRoute(e.data);
             }
           }}
         />
+        {/* // initRoute(e.data); */}
         {scanning && (
           <ActivityIndicator
             size={50}

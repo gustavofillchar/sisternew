@@ -7,7 +7,7 @@ import {
   ErrorContainer,
 } from './styles';
 import {RNCamera} from 'react-native-camera';
-import {StyleSheet, Image, ActivityIndicator} from 'react-native';
+import {StyleSheet, Image, ActivityIndicator, Text} from 'react-native';
 
 import bgscanner from '../../assets/bg.png';
 
@@ -26,6 +26,9 @@ function QRCodeScanner(
   return (
     <Container>
       <Image resizeMode="cover" source={bgscanner} style={styles.background} />
+      <Text style={styles.InfoDoing}>
+        Aponte para o CÓDIGO QR para continuar
+      </Text>
       <RNCamera
         ref={camera}
         style={styles.camera}
@@ -64,5 +67,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: '100%',
     width: '100%',
+  },
+  InfoDoing: {
+    position: 'absolute',
+    zIndex: 3,
+    color: '#FFC107',
+    alignSelf: 'center',
+    textAlign: 'center',
+    flex: 1,
+    margin: 20,
+    fontSize: 16,
+    fontWeight: '700',
   },
 });

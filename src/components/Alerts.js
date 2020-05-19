@@ -21,15 +21,11 @@ export function alertChoose(newRouteCallback, routeDefinedCallback) {
 
 export function confirmCancelRoute(confirmCallback) {
   Alert.alert(
-    'Aviso',
-    'Tem certeza que deseja sair da rota atual e perder todo progresso?',
+    'ATENÇÃO, MOTORISTA!',
+    'Para finalizar a viagem você deve clicar em FINALIZAR ROTA e ler o QR Code da Van.',
     [
       {
-        text: 'Sair da Rota',
-        onPress: confirmCallback,
-      },
-      {
-        text: 'Cancelar',
+        text: 'Ok',
       },
     ],
   );

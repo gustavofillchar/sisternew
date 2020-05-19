@@ -1,8 +1,17 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {View, Text, StatusBar, ActivityIndicator, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  BackHandler,
+  ToastAndroid,
+  StatusBar,
+  ActivityIndicator,
+  Alert,
+  Switch,
+} from 'react-native';
 import MDIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import api from '~/services/api';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import {
   Container,
   ContainerForm,
@@ -16,6 +25,9 @@ import {
   Logo,
   RecoveryPassword,
   TextPass,
+  RememberText,
+  BoxRemember,
+  ShowPassEye,
 } from './styles';
 
 import logoapp from '../../assets/logoapp.png';
@@ -31,34 +43,99 @@ export default function Login({navigation}) {
   const [numberClick, setNumberClick] = useState(0);
   const [editable, setEditable] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [saveMyLogin, setSaveMyLogin] = useState(false);
+
+  const backHandler = useCallback(() => {
+    if (numberClick === 2) {
+      BackHandler.exitApp();
+    }
+    setNumberClick(2);
+    ToastAndroid.show(
+      'Pressione novamente para sair do aplicativo',
+      ToastAndroid.SHORT,
+    );
+    setTimeout(() => {
+      setNumberClick(1);
+    }, 1000);
+    return true;
+  }, [numberClick]);
+
+  useEffect(() => {
+    BackHandler.removeEventListener('hardwareBackPress', backHandler);
+    BackHandler.addEventListener('hardwareBackPress', backHandler);
+  }, [backHandler]);
+
+  useEffect(() => {
+    navigation.addListener('blur', () => {
+      BackHandler.removeEventListener('hardwareBackPress', backHandler);
+    });
+
+    navigation.addListener('focus', () => {
+      BackHandler.addEventListener('hardwareBackPress', backHandler);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation]);
+
+  useEffect(() => {
+    const getFromStorage = async () => {
+      const savedLogin = await AsyncStorage.getItem('USER_PASS_LOGIN');
+
+      const savedJsonLogin = JSON.parse(savedLogin);
+      console.log(savedJsonLogin);
+
+      if (savedJsonLogin) {
+        setUserName(savedJsonLogin.user);
+        setPassword(savedJsonLogin.pass);
+      }
+    };
+    getFromStorage();
+  }, []);
 
   const loginUser = useCallback(() => {
     setLogging(true);
     if (hasError) {
       setHasError(false);
     }
-
-    api
-      .post('general/driver/login', {
-        email: userName,
-        password: password,
-        player_id: 1,
-      })
-      .then(async (response) => {
-        // console.log(response.data);
-        await storeTokenInStorage(response.data.access_token);
-        await storeDateLoginInStorage();
-        navigation.replace('Main', {user: response.data});
-        setUserName('');
-        setPassword('');
-      })
-      .catch((error) => {
-        console.log(error);
-        Alert.alert('Erro', error.message);
-        setHasError(true);
-        setLogging(false);
-      });
-  }, [hasError, navigation, password, userName]);
+    if (saveMyLogin) {
+      AsyncStorage.setItem(
+        'USER_PASS_LOGIN',
+        JSON.stringify({user: userName, pass: password}),
+      );
+    } else {
+      AsyncStorage.removeItem('USER_PASS_LOGIN');
+    }
+    if (userName.length && password.length > 1) {
+      api
+        .post('general/driver/login', {
+          email: userName,
+          password: password,
+          player_id: 1,
+        })
+        .then(async (response) => {
+          // console.log(response.data);
+          await storeTokenInStorage(response.data.access_token);
+          await storeDateLoginInStorage();
+          navigation.replace('Main', {user: response.data});
+          setUserName('');
+          setPassword('');
+        })
+        .catch((error) => {
+          console.log(error);
+          Alert.alert(
+            'Atenção',
+            'Usuário ou senha incorretos. Certifique-se que está inserindo os dados corretamente. Caso tenha esquecido sua senha vá até a seção "ESQUECI MINHA SENHA"',
+          );
+          setHasError(true);
+          setLogging(false);
+        });
+    } else {
+      setLogging(false);
+      Alert.alert(
+        'Atenção',
+        'Certifique-se que está inserindo os dados corretamente. Caso tenha esquecido sua senha vá até a seção "ESQUECI MINHA SENHA"',
+      );
+    }
+  }, [hasError, navigation, password, saveMyLogin, userName]);
 
   return (
     <Container source={wp} blurRadius={1.2}>
@@ -85,11 +162,29 @@ export default function Login({navigation}) {
           <InputHere
             placeholder="Senha"
             keyboardType="number-pad"
-            secureTextEntry={true}
+            secureTextEntry={showPassword ? false : true}
             value={password}
             onChangeText={(entry) => setPassword(entry)}
           />
+          <ShowPassEye
+            onPress={() => setShowPassword(showPassword ? false : true)}>
+            <MDIcon
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={24}
+              color="#999"
+            />
+          </ShowPassEye>
         </BoxInput>
+
+        <BoxRemember>
+          <RememberText>Lembrar-me</RememberText>
+          <Switch
+            trackColor={{false: '#888', true: '#888'}}
+            value={saveMyLogin}
+            onValueChange={setSaveMyLogin}
+            thumbColor={saveMyLogin ? '#c10c19' : '#f4f3f4'}
+          />
+        </BoxRemember>
 
         <LoginButton onPress={loginUser}>
           {logging ? (
@@ -98,8 +193,7 @@ export default function Login({navigation}) {
             <TextButton>Entrar</TextButton>
           )}
         </LoginButton>
-        <RecoveryPassword
-          onPress={() => Alert.alert('Atenção', 'Opção não habilitada.')}>
+        <RecoveryPassword onPress={() => navigation.navigate('RecoveryPass')}>
           <TextPass>Esqueci minha senha</TextPass>
         </RecoveryPassword>
         <RegisterButton onPress={() => navigation.navigate('Register')}>

@@ -20,12 +20,12 @@ import QRCodeScanner from '~/components/QRCodeScanner';
 import MapView, {Marker} from 'react-native-maps';
 import {Image, StyleSheet} from 'react-native';
 
-export default function RouteResult({navigation}) {
+export default function RouteResult({navigation, route: navigationRoute}) {
   const [loading, setLoading] = useState(false);
   const [scanned, setScanned] = useState(false);
 
   const scanner = useRef();
-  const {current: route} = useRef(navigation.getParam('route'));
+  const {current: route} = useRef(navigationRoute.params?.route);
   const {current: kms} = useRef(
     distaceBetweenTwoPoints(route.initialPosition, route.finalPosition).toFixed(
       2,

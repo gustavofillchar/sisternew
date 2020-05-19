@@ -4,7 +4,15 @@ import MDIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
 
 function PhotoPreview(
-  {size, onSelectPhoto, valid = true, initialImage = null, disabled = false},
+  {
+    size,
+    imageUri,
+    onlyRead,
+    onSelectPhoto,
+    valid = true,
+    initialImage = null,
+    disabled = false,
+  },
   ref,
 ) {
   const [photoPreview, setPhotoPreview] = useState(initialImage);
@@ -47,13 +55,18 @@ function PhotoPreview(
   }
 
   return (
-    <Container onPress={openImagePicker} activeOpacity={0.8}>
+    <Container
+      onPress={openImagePicker}
+      activeOpacity={0.8}
+      disabled={onlyRead ? true : false}>
       <BoxImage>
-        <ImageProfile source={getSourceImage()} />
+        <ImageProfile source={imageUri ? {uri: imageUri} : getSourceImage()} />
       </BoxImage>
-      <IconBox>
-        <MDIcon name="image-plus" size={18} color="#fff" />
-      </IconBox>
+      {!onlyRead ? (
+        <IconBox>
+          <MDIcon name="image-plus" size={18} color="#fff" />
+        </IconBox>
+      ) : null}
     </Container>
   );
 }
