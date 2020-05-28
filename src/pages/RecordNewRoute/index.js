@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect, useRef} from 'react';
-import {Container} from './styles';
+import {Container, Info} from './styles';
 import Map from './Map';
 
 import QRCodeScanner from '~/components/QRCodeScanner';
@@ -10,18 +10,29 @@ import {
 } from '~/utils/geolocation';
 import {storeRouteInStorage} from '~/storage/routes';
 import {ContainerCentered} from '~/components/GlobalStyles';
-import {ActivityIndicator, BackHandler} from 'react-native';
+import {ActivityIndicator, BackHandler, Alert} from 'react-native';
 import {scannerStudentQRCode, streamingRoute} from '~/services/api';
 import {getNowDateFormmated} from '~/utils/date';
 import {alertConfirmRouteFinal, confirmCancelRoute} from '~/components/Alerts';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 export default function RecordNewRoute({navigation, route: navigationRoute}) {
   const [_, setScanning] = useState(false);
   const [scanError, setScanError] = useState(false);
   const [coordinates, setCoordinates] = useState([]);
   const [currentLocation, setCurrentLocation] = useState(null);
-
+  const [offlineReadStudent, setOfflineReadStudent] = useState([]);
   const scanningHolder = useRef(false);
+
+  const synchronized = useRef(false);
+
+  const netInfo = useNetInfo();
+  const isOffline = useRef(false);
+  isOffline.current = netInfo.isConnected;
+  useEffect(() => {
+    console.log('status: ', isOffline.current);
+    console.log('students: ', offlineReadStudent);
+  }, [netInfo, offlineReadStudent]);
 
   useEffect(() => {
     navigation.addListener('focus', () => {
@@ -114,6 +125,35 @@ export default function RecordNewRoute({navigation, route: navigationRoute}) {
     [navigation, route],
   );
 
+  const handleSynchronizeStudent = useCallback(
+    async (studentCode) => {
+      if (!route.current.stops) {
+        route.current.stops = [];
+      }
+
+      setScanError(false);
+      setScanning(true);
+      try {
+        const coords = await getCurrentLocation();
+        await scannerStudentQRCode(
+          route.current.id_worked_route,
+          studentCode,
+          coords.latitude,
+          coords.longitude,
+          getNowDateFormmated(),
+        );
+        route.current.totalStudents++;
+        route.current.stops.push(coords);
+      } catch (error) {
+        console.warn(error);
+        setScanError(true);
+      } finally {
+        setScanning(false);
+      }
+    },
+    [route],
+  );
+
   const handleEndRoute = useCallback(
     async (finalPosition) => {
       route.current.finalPosition = finalPosition;
@@ -134,22 +174,72 @@ export default function RecordNewRoute({navigation, route: navigationRoute}) {
           <Map
             location={currentLocation}
             onFinalizeRoute={(finalPosition) => {
-              alertConfirmRouteFinal(() => handleEndRoute(finalPosition));
+              if (isOffline.current) {
+                if (offlineReadStudent.length > 0 && !synchronized.current) {
+                  offlineReadStudent.map((item, index) => {
+                    handleSynchronizeStudent(item.student);
+                    console.log(index);
+
+                    if (offlineReadStudent.length === index + 1) {
+                      console.log('chegou no ultimo');
+                      synchronized.current = true;
+                      alertConfirmRouteFinal(() =>
+                        handleEndRoute(finalPosition),
+                      );
+                      setOfflineReadStudent([]);
+                    }
+                  });
+                } else {
+                  alertConfirmRouteFinal(() => handleEndRoute(finalPosition));
+                }
+              } else {
+                Alert.alert(
+                  'Atenção',
+                  'Você está desconectado. Para finalizar a rota você deve estar conectado com a internet.',
+                );
+              }
             }}
             coordinates={coordinates}
             // onReadQRCode={() => setScannerVisible(true)}
           />
           <QRCodeScanner
             onReadQRCode={async (e) => {
-              if (scanningHolder.current === false) {
-                scanningHolder.current = true;
-                handleReadQRCode(e);
-                // alert('apenas 1');
+              if (isOffline.current) {
+                if (scanningHolder.current === false) {
+                  scanningHolder.current = true;
+                  handleReadQRCode(e);
+                }
+              } else {
+                if (scanningHolder.current === false) {
+                  scanningHolder.current = true;
+                  Alert.alert(
+                    'LEITURA OFFLINE REALIZADA COM SUCESSO',
+                    `Os dados serão transmitidos com restabelecimento do sinal.\n\nCódigo do aluno: ${e}`,
+                    [
+                      {
+                        text: 'Ok',
+                        onPress: async () => {
+                          scanningHolder.current = false;
+
+                          setOfflineReadStudent([
+                            ...offlineReadStudent,
+                            {student: e},
+                          ]);
+                        },
+                      },
+                    ],
+                  );
+                }
               }
             }}
             scanning={scanningHolder.current}
             error={scanError}
           />
+          <Info colorbg={!isOffline.current ? '#f44336' : '#4CAF50'}>
+            {!isOffline.current
+              ? 'Leitura Offline Ativada'
+              : 'Conectado com a internet'}
+          </Info>
         </>
       ) : (
         <ContainerCentered>

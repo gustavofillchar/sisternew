@@ -1,9 +1,9 @@
 import React, {useCallback, useRef, useState} from 'react';
-import {StyleSheet, Image, ActivityIndicator} from 'react-native';
+import {StyleSheet, Alert, Image, ActivityIndicator} from 'react-native';
 import {Container, QRCameraReaderBox, ErrorMessage} from './styles';
 
 import {RNCamera} from 'react-native-camera';
-
+import {useNetInfo} from '@react-native-community/netinfo';
 import bgscanner from '../../assets/bg.png';
 import {startRoute} from '~/services/api';
 import {getCurrentLocation} from '~/utils/geolocation';
@@ -15,6 +15,10 @@ export default function ReadCar({navigation, route: navigationRoute}) {
   const {current: user} = useRef(navigationRoute.params);
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState(false);
+
+  const netInfo = useNetInfo();
+  const isOffline = useRef(false);
+  isOffline.current = netInfo.isConnected;
 
   const scanningHolder = useRef(false);
 
@@ -56,7 +60,6 @@ export default function ReadCar({navigation, route: navigationRoute}) {
               scanningHolder.current = false;
             },
             () => {
-              // navigateInGoogleMaps(initialPosition, finalPosition);
               route.initialPosition = initialPosition;
               route.finalPosition = finalPosition;
               route.stops = stops;
@@ -90,9 +93,18 @@ export default function ReadCar({navigation, route: navigationRoute}) {
         <RNCamera
           style={styles.camera}
           onBarCodeRead={async (e) => {
-            if (scanningHolder.current === false) {
+            if (!isOffline.current && scanningHolder.current === false) {
               scanningHolder.current = true;
-              await initRoute(e.data);
+              Alert.alert(
+                'SEM CONEXÃO',
+                'Você está desconectado da internet e assim não poderá iniciar uma viagem.',
+                [{text: 'Ok', onPress: () => (scanningHolder.current = false)}],
+              );
+            } else {
+              if (scanningHolder.current === false) {
+                scanningHolder.current = true;
+                await initRoute(e.data);
+              }
             }
           }}
         />

@@ -255,7 +255,7 @@ export default function Register({navigation}) {
         'Aviso',
         'Motorista cadastrado com sucesso. Faça o login para poder cadastrar o veículo.',
       );
-      navigation.navigate('Main');
+      navigation.goBack();
     } catch (error) {
       console.warn(error);
       Alert.alert(

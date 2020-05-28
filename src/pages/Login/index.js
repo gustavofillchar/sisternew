@@ -9,6 +9,7 @@ import {
   Alert,
   Switch,
 } from 'react-native';
+import {useNetInfo} from '@react-native-community/netinfo';
 import MDIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import api from '~/services/api';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -64,6 +65,12 @@ export default function Login({navigation}) {
     BackHandler.removeEventListener('hardwareBackPress', backHandler);
     BackHandler.addEventListener('hardwareBackPress', backHandler);
   }, [backHandler]);
+
+  const netInfo = useNetInfo();
+
+  useEffect(() => {
+    console.log('status connection: ', netInfo.isConnected);
+  }, [netInfo]);
 
   useEffect(() => {
     navigation.addListener('blur', () => {
